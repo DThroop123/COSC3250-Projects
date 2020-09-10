@@ -26,6 +26,8 @@ void testcases(void)
 {
     int c;
 
+    kputc('h');
+
     kprintf("===TEST BEGIN===\r\n");
 
     c = kgetc();

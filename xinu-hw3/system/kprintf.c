@@ -76,7 +76,16 @@ syscall kputc(uchar c)
 
     /* Pointer to the UART control and status registers.  */
     regptr = (struct pl011_uart_csreg *)0x3F201000;
-
+    
+    if(!(regptr->fr & PL011_FR_TXFF))
+    {
+	regptr->dr = c;	
+    }
+    else
+    {
+	while(regptr->fr & PL011_FR_TXFF);
+	regptr->dr = c;
+    }
     // TODO: Check UART flags register.
     //       Once the Transmitter FIFO is not full, send character c.
 
