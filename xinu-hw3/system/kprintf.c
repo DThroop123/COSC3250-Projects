@@ -9,6 +9,7 @@
 #define UNGETMAX 10             /* Can un-get at most 10 characters. */
 
 static unsigned char ungetArray[UNGETMAX];
+int bufp = 0;
 
 /**
  * Synchronously read a character from a UART.  This blocks until a character is
@@ -24,6 +25,18 @@ syscall kgetc(void)
 
     /* Pointer to the UART control and status registers.  */
     regptr = (struct pl011_uart_csreg *)0x3F201000;
+    uchar c = '0';
+    
+    if(bufp > 0)
+    {
+	return ungetArray[--bufp];
+    }
+    else
+    {
+	while(regptr->fr & PL011_FR_RXFE);
+	c = regptr->dr;
+	return c;	
+    }  
 
     // TODO: First, check the unget buffer for a character.
     //       Otherwise, check UART flags register, and

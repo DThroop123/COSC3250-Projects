@@ -24,15 +24,21 @@ devcall putc(int dev, char c)
  */
 void testcases(void)
 {
-    int c;
+    uchar c;
 
     kputc('h');
 
-    kprintf("===TEST BEGIN===\r\n");
+    kprintf("\n===TEST BEGIN===\r\n");
 
     c = kgetc();
+    kputc(c);
+    
+
     switch (c)
     {
+	case 'A':
+		kputc(c);
+		break;
 
         // TODO: Test your operating system!
 
