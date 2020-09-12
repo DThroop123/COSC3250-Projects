@@ -26,13 +26,15 @@ void testcases(void)
 {
     uchar c;
 
-    kputc('h');
+   // kputc('h');
 
     kprintf("\n===TEST BEGIN===\r\n");
 
+    kungetc('X');
     c = kgetc();
     kputc(c);
-    
+
+    kprintf("\n");
 
     switch (c)
     {

@@ -66,6 +66,15 @@ syscall kcheckc(void)
  */
 syscall kungetc(unsigned char c)
 {
+    if(bufp >= UNGETMAX)
+    {
+	kprintf("kungetc: too many characters\n");
+    }
+    else
+    {
+	ungetArray[bufp++] = c;	
+    }
+    
     // TODO: Check for room in unget buffer, put the character in or discard.
 
     return SYSERR;
