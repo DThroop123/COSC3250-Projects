@@ -54,13 +54,13 @@ syscall kcheckc(void)
     volatile struct pl011_uart_csreg *regptr;
     regptr = (struct pl011_uart_csreg *)0x3F201000;
 
-    if((bufp >= 0) && (bufp < UNGETMAX)) //There are characters stored in our ungetcbuffer
+    if((bufp >= 0) || (!(regptr->fr & PL011_FR_RXFE))) //There are characters stored in our ungetcbuffer
     {
-
+	return 1;	
     }
-    else if(regptr->fr & PL011_FR_RXFF) // Recive FIFO is full (characters are present?)
+    else // Recive FIFO is full (characters are present?)
     {
-		
+	return 0;		
     }
 	
     // TODO: Check the unget buffer and the UART for characters.

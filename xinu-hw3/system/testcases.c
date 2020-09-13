@@ -31,10 +31,14 @@ void testcases(void)
     kprintf("\n===TEST BEGIN===\r\n");
 
     kungetc('X');
-    c = kgetc();
-    kputc(c);
-
-    kprintf("\n");
+    if(kcheckc())
+    {
+	kprintf("Character available\n");
+    }
+    else
+    {
+	kprintf("Didn't work\n");
+    }
 
     switch (c)
     {
