@@ -24,12 +24,13 @@ devcall putc(int dev, char c)
  */
 void testcases(void)
 {
-    uchar c;
+    uchar c = '0';
 
    // kputc('h');
 
     kprintf("\n===TEST BEGIN===\r\n");
-
+    
+    //Test 1: unget a character and check to see if its avalible in the buffer array
     kungetc('X');
     if(kcheckc())
     {
@@ -40,10 +41,12 @@ void testcases(void)
 	kprintf("Didn't work\n");
     }
 
+    //Test 2: Get a character
+    c = kgetc();
     switch (c)
     {
-	case 'A':
-		kputc(c);
+	case 'X':
+		kprintf("The character was retrieved from the unbuffer array.\n");
 		break;
 
         // TODO: Test your operating system!
@@ -52,6 +55,10 @@ void testcases(void)
         kprintf("Hello Xinu World!\r\n");
     }
 
+    //Test 3: putting a statement into the UART and/or Buffer array, then getting it and printing the statment to the screen 
+    kputc('B');
+    c = kgetc(); 
+    kprintf("C = %c\n", c);
 
     kprintf("\r\n===TEST END===\r\n");
     return;
