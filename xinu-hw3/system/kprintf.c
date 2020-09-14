@@ -54,7 +54,7 @@ syscall kcheckc(void)
     volatile struct pl011_uart_csreg *regptr;
     regptr = (struct pl011_uart_csreg *)0x3F201000;
 
-    if((bufp >= 0) || (!(regptr->fr & PL011_FR_RXFE))) //There are characters stored in our ungetcbuffer
+    if((bufp > 0) || (!(regptr->fr & PL011_FR_RXFE))) //There are characters stored in our ungetcbuffer
     {
 	return 1;	
     }
