@@ -27,7 +27,8 @@ void testcases(void)
     uchar c;
 
     kprintf("\n===TEST BEGIN===\r\n");
-
+    
+    //This test is to ensure that the kgetc() wait until there is a character in the flag register. This character was from the command line and will be used to run the switch statements of the other test cases
     c = kgetc();
     switch (c)
     {
@@ -60,7 +61,7 @@ void testcases(void)
 		kprintf("Test Case 4\r\n");
 		c = kgetc(); //wait for input via the command line
 		kprintf("The character entered was : %c\r\n", c);
-	//Testing more than one character input via command line
+	//Testing to see if the kcheckc() is able to detect a character that has been ungotten
 	case '5':
 		kprintf("Test Case 5\r\n");
 		kungetc('B');
@@ -70,6 +71,41 @@ void testcases(void)
 		else{
 			kprintf("Not working\r\n");
 		}
+		break;
+	//Testing to see if the print statment of to many characters appears after the bufp index surpasses the UNGETMAX global variable
+	case '6':
+		kprintf("Test Case 6\r\n");
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');
+		kungetc('T');//This call should cause the print statement in the kungetc() to be called
+		break;
+	//Testing to see the kputc() functionality of the else statement
+	case '7':
+		kprintf("Test Case 7\r\n");
+		break;
+	//Testing the conjunction of functions together
+	case '8':
+		kprintf("Test Case 8\r\n");
+		kprintf("Putting a character to the screen\r\n");
+		kputc('D');
+		kprintf("\r\n");
+		kprintf("Getting the character put in\r\n");
+		c = kgetc();
+		kprintf("If 1, there is a character avaliable: %d\r\n", kcheckc());
+		c = kgetc();
+		kprintf("The character is: %c\r\n", c);
+		kungetc(c);
+		kprintf("Have ungotten the character from previous call\r\n");
+		c = kgetc();
+		kprintf("Re-gotten character is: %c\r\n", c);
 		break;
 		
         // TODO: Test your operating system!
