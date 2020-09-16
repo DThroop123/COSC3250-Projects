@@ -1,4 +1,12 @@
 /**
+ ** COSC 3250 - Project 3
+ ** This file provides the basis of character I/0 for our embedded operating system.
+ ** @author Daniel Throop Brea Brennan
+ ** Instructor: Dennis Brylow
+ ** TA-BOT:MAILTO daniel.throop@marquette.edu brea.brennan@marquette.edu 
+ **/
+
+/**
  * @file kprintf.c
  */
 
