@@ -47,7 +47,14 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     numproc++;
     ppcb = &proctab[pid];
 
-    // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h)
+    // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h
+    
+    ppcb->stklen = ssize;
+    strncpy(ppcb->name, name, PNMLEN);
+    ppcb->stkptr = NULL;
+    ppcb->state = PRREADY;  
+    ppcb->stkbase = (ulong)(saddr - ssize);
+
     // 1.stack size = ssize
     // 2.stack name use the function strncpy(1. pointer to the string, 2.Paramenter being set, 3.Length of the string);
     // 		1. pcbr name field
