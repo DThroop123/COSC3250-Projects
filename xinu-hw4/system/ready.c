@@ -29,5 +29,5 @@ syscall ready(pid_typ pid, bool resch)
     {
         resched();
     }
-    return OK;
+    return OK; //returns 1 is OK check to see if the call succeeded
 }

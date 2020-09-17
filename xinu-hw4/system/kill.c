@@ -22,7 +22,7 @@ syscall kill(int pid)
         return SYSERR;
     }
 
-    ppcb = &proctab[pid];
+    ppcb = &proctab[pid]; //pointer to the process control block
 
     --numproc;
 
@@ -30,7 +30,7 @@ syscall kill(int pid)
     {
     case PRCURR:
         ppcb->state = PRFREE;   /* suicide */
-        resched();
+        resched(); //looks for the next procces in the que and put it on the cpu
 
     case PRREADY:
         remove(pid);

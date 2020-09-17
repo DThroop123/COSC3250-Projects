@@ -32,10 +32,12 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 
     if (ssize < MINSTK)
         ssize = MINSTK;
-    ssize = (ulong)(ssize + 3) & 0xFFFFFFFC;
+    ssize = (ulong)(ssize + 3) & 0xFFFFFFFC; //rounding up the stack size to a nice number
+   
     /* round up to even boundary    */
     saddr = (ulong *)getstk(ssize);     /* allocate new stack and pid   */
-    pid = newpid();
+    pid = newpid(); //gets the next pid in the queue to be used
+
     /* a little error checking      */
     if ((((ulong *)SYSERR) == saddr) || (SYSERR == pid))
     {
@@ -45,18 +47,26 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     numproc++;
     ppcb = &proctab[pid];
 
-    // TODO: Setup PCB entry for new process.
+    // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h)
+    // 1.stack size = ssize
+    // 2.stack name use the function strncpy(1. pointer to the string, 2.Paramenter being set, 3.Length of the string);
+    // 		1. pcbr name field
+    // 		2. create() argument for name 
+    // 		3.PNMLEN amount
+    // 3.stack pointer = NULL
+    // 4.state of process = defined in proc.h file
+    // 5.stack base (is the bottom of the stack)= stake adder(address in memory)  - size of the stack  
 
     /* Initialize stack with accounting block. */
-    *saddr = STACKMAGIC;
-    *--saddr = pid;
-    *--saddr = ppcb->stklen;
-    *--saddr = (ulong)ppcb->stkbase;
+    *saddr = STACKMAGIC; //constant to determine where the stack actual ends
+    *--saddr = pid; //puts the pid into the stack
+    *--saddr = ppcb->stklen; //length of the stack ssize
+    *--saddr = (ulong)ppcb->stkbase; //the address of the stack base
 
     /* Handle variable number of arguments passed to starting function   */
-    if (nargs)
+    if (nargs) 
     {
-        pads = ((nargs - 1) / 4) * 4;
+        pads = ((nargs - 1) / 4) * 4; //how many spaces that we need to store any additional arguments
     }
     /* If more than 4 args, pad record size to multiple of native memory */
     /*  transfer size.  Reserve space for extra args                     */
@@ -66,10 +76,19 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     }
 
     // TODO: Initialize process context.
+    //		-make space on the stack for all 16 of your registers and set them to 0
+    //		-r15 (instruction pointer) aka program counter -- address of the function you want to run (argument to the create function funcaddr)
+    //		-r14 (Link Register) - keep track of the function that calls it - pass the value of &userret
+    //		-r13 (stack pointer)
+    //		-r12-r0 (content registers)
     //
     // TODO:  Place arguments into activation record.
     //        See K&R 7.3 for example using va_start, va_arg and
     //        va_end macros for variable argument functions.
+    //			-set the pcd's stkptr to the last register r0
+    //			-add the arguments to their desinated areas 
+    //
+    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it is
 
     return pid;
 }

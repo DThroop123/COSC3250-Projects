@@ -28,6 +28,9 @@
 ctxsw:
 
 // TODO: Save callee-save ("non-volatile") registers.
+//		str --> storing to memory (arguments 1.Register Value 2.Where you want to store in the memory)
+//		ldr --> takes what is in the address and moves it to the register (arguments 1.Address 2.Register)
+//		
 // TODO: Restore callee-save ("non-volatile") registers.
 // TODO: Jump to next function.
 

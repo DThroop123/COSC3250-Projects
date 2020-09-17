@@ -61,7 +61,7 @@ typedef struct pentry
 #define MINSTK   4096       /**< minimum process stack size              */
 #define NULLSTK  MINSTK     /**< null process stack size                 */
 
-extern struct pentry proctab[];
+extern struct pentry proctab[]; //Used to manage the number of processes
 extern int numproc;         /**< currently active processes              */
 extern int currpid;         /**< currently executing process             */
 
