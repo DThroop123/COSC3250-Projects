@@ -102,6 +102,8 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     }
 
     //assign regsiters with arguments passed
+    
+    ppcb->stkptr = saddr;
 
     va_start(ap, nargs);
 
@@ -110,7 +112,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 	ppcb->stkptr[CTX_RO] = va_arg(ap, int);
 	ppcb->stkptr[CTX_R1] = va_arg(ap, int);
          
-     //	ppcb->stkptr[CTX_R + i] = va_arg(ap, int); would this work?
+     //	ppcb->stkptr[CTX_R0 + i] = va_arg(ap, int); would this work?
 
     }
 
@@ -118,7 +120,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
        
     ppcb->stkptr[CTX_PC] = funcaddr;
     ppcb->stkptr[CTX_LR] = &userret;
-    ppcb->stkptr[CTX_SP] = ppcb->stkptr; 
+   // ppcb->stkptr[CTX_SP] = ppcb->stkptr; not required
 	
    
 
