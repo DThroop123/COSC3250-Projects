@@ -100,27 +100,38 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     {
 	*--saddr = 0;
     }
-
-    //assign regsiters with arguments passed
     
+    //assign stack pointer with stack address
+
     ppcb->stkptr = saddr;
 
     va_start(ap, nargs);
 
-    if(nargs > 5)
-    {
-	ppcb->stkptr[CTX_RO] = va_arg(ap, int);
-	ppcb->stkptr[CTX_R1] = va_arg(ap, int);
-         
-     //	ppcb->stkptr[CTX_R0 + i] = va_arg(ap, int); would this work?
+    //assign arguments to registers
 
+    for(i = 0; i < nargs; i++)
+    { 
+	//R0 - R3 
+	if(i < 4)
+	{
+		ppcb->stkptr[CTX_R0 + i] = va_arg(ap, int); 
+       	}
+	//padding registers
+	else
+	{
+		tempPoint[i - 5] = va_arg(ap, int);
+	}	
     }
+    
+    //end argument list
+ 
+    va_end(ap);
 
     //assign program counter, link register, and stack pointer
        
     ppcb->stkptr[CTX_PC] = funcaddr;
     ppcb->stkptr[CTX_LR] = &userret;
-   // ppcb->stkptr[CTX_SP] = ppcb->stkptr; not required
+    //ppcb->stkptr[CTX_SP] = ppcb->stkptr; not required
 	
    
 
