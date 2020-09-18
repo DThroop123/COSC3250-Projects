@@ -1,4 +1,12 @@
 /**
+ ** COSC 3250 - Project 4
+ ** Creates new process
+ ** @author Daniel Throop and Brea Brennan 
+ ** Instructor Brylow
+ ** TA-BOT:MAILTO daniel.throop@marquette.edu brea.brennan@marquette.edu 
+ **/
+
+/**
  * @file create.c
  * @provides create, newpid, userret
  *
@@ -47,7 +55,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     numproc++;
     ppcb = &proctab[pid];
 
-    // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h
+    // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h  [DONE]
     
     ppcb->stklen = ssize;
     strncpy(ppcb->name, name, PNMLEN);
@@ -81,6 +89,38 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     {
         *--saddr = 0;
     }
+    
+    void* tempPoint;
+
+    tempPoint = saddr;
+
+    //setting 16 registers to 0
+
+    for (i = 0; i < 16; i++)
+    {
+	*--saddr = 0;
+    }
+
+    //assign regsiters with arguments passed
+
+    va_start(ap, nargs);
+
+    if(nargs > 5)
+    {
+	ppcb->stkptr[CTX_RO] = va_arg(ap, int);
+	ppcb->stkptr[CTX_R1] = va_arg(ap, int);
+         
+     //	ppcb->stkptr[CTX_R + i] = va_arg(ap, int); would this work?
+
+    }
+
+    //assign program counter, link register, and stack pointer
+       
+    ppcb->stkptr[CTX_PC] = funcaddr;
+    ppcb->stkptr[CTX_LR] = &userret;
+    ppcb->stkptr[CTX_SP] = ppcb->stkptr; 
+	
+   
 
     // TODO: Initialize process context.
     //		-make space on the stack for all 16 of your registers and set them to 0
