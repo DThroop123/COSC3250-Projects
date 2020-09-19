@@ -1,4 +1,4 @@
-../system/testcases.o: ../system/testcases.c ../include/xinu.h \
+../system/getstk.o: ../system/getstk.c ../include/xinu.h \
  ../include/interrupt.h ../include/stddef.h ../include/bcm2837.h \
  ../include/kernel.h ../include/conf.h ../include/stdarg.h \
  ../include/compiler.h ../include/arm.h ../include/proc.h \

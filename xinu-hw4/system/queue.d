@@ -1,4 +1,4 @@
-../system/testcases.o: ../system/testcases.c ../include/xinu.h \
+../system/queue.o: ../system/queue.c ../include/xinu.h \
  ../include/interrupt.h ../include/stddef.h ../include/bcm2837.h \
  ../include/kernel.h ../include/conf.h ../include/stdarg.h \
  ../include/compiler.h ../include/arm.h ../include/proc.h \

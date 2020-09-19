@@ -60,8 +60,8 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     ppcb->stklen = ssize;
     strncpy(ppcb->name, name, PNMLEN);
     ppcb->stkptr = NULL;
-    ppcb->state = PRREADY;  
-    ppcb->stkbase = (ulong)(saddr - ssize);
+    ppcb->state = PRSUSP;  
+    ppcb->stkbase = (ulong *)(saddr - ssize);
 
     // 1.stack size = ssize
     // 2.stack name use the function strncpy(1. pointer to the string, 2.Paramenter being set, 3.Length of the string);
@@ -90,9 +90,9 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
         *--saddr = 0;
     }
     
-    void* tempPoint;
+    //void* tempPoint;
+    //tempPoint = saddr;
 
-    tempPoint = saddr;
 
     //setting 16 registers to 0
 
@@ -114,12 +114,13 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 	//R0 - R3 
 	if(i < 4)
 	{
-		ppcb->stkptr[CTX_R0 + i] = va_arg(ap, int); 
+		saddr[CTX_R0 + i] = va_arg(ap, int); 
        	}
 	//padding registers
 	else
 	{
-		tempPoint[i - 5] = va_arg(ap, int);
+		saddr[CTX_PC + (i - 3)] = va_arg(ap, int);
+		//tempPoint[i - 4] = va_arg(ap, int);
 	}	
     }
     
@@ -129,11 +130,8 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 
     //assign program counter, link register, and stack pointer
        
-    ppcb->stkptr[CTX_PC] = funcaddr;
-    ppcb->stkptr[CTX_LR] = &userret;
-    //ppcb->stkptr[CTX_SP] = ppcb->stkptr; not required
-	
-   
+    saddr[CTX_PC] = (ulong *)funcaddr;
+    saddr[CTX_LR] = (ulong *)&userret;
 
     // TODO: Initialize process context.
     //		-make space on the stack for all 16 of your registers and set them to 0
@@ -148,7 +146,9 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     //			-set the pcd's stkptr to the last register r0
     //			-add the arguments to their desinated areas 
     //
-    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it is
+    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it i
+    
+  //  ready(pid, 1);
 
     return pid;
 }
