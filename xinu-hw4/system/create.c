@@ -146,9 +146,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     //			-set the pcd's stkptr to the last register r0
     //			-add the arguments to their desinated areas 
     //
-    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it i
-    
-  //  ready(pid, 1);
+    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it     
 
     return pid;
 }
