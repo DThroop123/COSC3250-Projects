@@ -95,6 +95,20 @@ void testcases(void)
         // Process creation testcase
         pid = create((void *)testmain, INITSTK, "MAIN1", 2, 0, NULL);
         printpcb(pid);
+
+	kprintf("Address of function in R15: 0x%X\r\n", &testmain);
+	
+	//Getting process control block + access to pointer
+	int a;
+	pcb *ppcb2 = NULL;
+	ppcb2 = &proctab[pid];
+	
+	//printing out R0 - R15 (reverse order)
+	for(a = 0; a < 16; a++)
+	{
+		kprintf("0x%X\r\n", ((ulong *)ppcb2->stkptr)[a]);
+	}
+
         break;
 
     case '1':
@@ -104,19 +118,21 @@ void testcases(void)
                      0x55555555, 0x66666666, 0x77777777, 0x88888888);
         printpcb(pid);
  	
+	kprintf("Address of function in R15: 0x%X\r\n", &testbigargs);
+		
 	//getting process control block + access to pointer
 	int i;
 	pcb *ppcb = NULL;
-	pcb = &proctab[pid];
+	ppcb = &proctab[pid];
 
-	//printing out registers R0 - R15 + Pads
+	//printing out registers R0 - R15 + Pads (reverse order of how it was drawn on paper)
 	for(i = 0; i < 20; i++)
 	{
-		kprintf("%d\n", pcb->stkptr);
-		pcb->stkptr++; 
+		kprintf("0x%X\r\n", ((ulong *)ppcb->stkptr)[i]);
 	}
 	
-       // ready(pid, RESCHED_YES);
+	ready(pid, RESCHED_YES);
+	
 
         break;
 
@@ -124,10 +140,13 @@ void testcases(void)
         // Create three copies of a process, and let them play.
         ready(create((void *)testmain, INITSTK, "MAIN1", 2, 0, NULL),
               RESCHED_NO);
+
         ready(create((void *)testmain, INITSTK, "MAIN2", 2, 0, NULL),
               RESCHED_NO);
+
         ready(create((void *)testmain, INITSTK, "MAIN3", 2, 0, NULL),
               RESCHED_YES);
+
         break;
 
     default:

@@ -30,36 +30,42 @@ ctxsw:
 				//should we increment by 4 (int) or 8 bytes (ulong) (?)
 
 
+	add	sp, sp, #-64	//pushes 16 more register spaces onto the current stack
+	
 
+	str     r4, [sp, #CTX_R4 * 4]	//storing non-volatile memory
+	str	r5, [sp, #CTX_R5 * 4]
+	str	r6, [sp, #CTX_R6 * 4]
+	str	r7, [sp, #CTX_R7 * 4]
+	str 	r8, [sp, #CTX_R8 * 4]
+	str	r9, [sp, #CTX_R9 * 4]
+	str	r10, [sp, #CTX_R10 * 4]
+	str	r11, [sp, #CTX_R11 * 4]
+	str 	r12, [sp, #CTX_IP * 4]	
+	str	r14, [sp, #CTX_LR * 4]  //storing r14 at 56 bytes above first adress in stack pointer/	
+	str 	r15, [sp, #CTX_PC * 4]  //storing r15 at 60 bytes above first adress in stack pointer
+	str	r13, [sp, #CTX_SP * 4]	//storing oldstack adress in r13
+	str	sp, [r0] //stack pointer stores in r0
+	
+	ldr	sp, [r1] //stack pointer into r1 can do math to locate the sp by add sp, sp, #64 
+	ldr	r0, [sp, #CTX_R0 *4]
+	ldr	r1, [sp, #CTX_R1 *4]
+	ldr	r2, [sp, #CTX_R2 *4]
+	ldr	r3, [sp, #CTX_R3 *4]
+	ldr	r4, [sp, #CTX_R4 * 4]	//loading non-volatile memory
+	ldr	r5, [sp, #CTX_R5 * 4]
+	ldr	r6, [sp, #CTX_R6 * 4]
+	ldr	r7, [sp, #CTX_R7 * 4]
+	ldr	r8, [sp, #CTX_R8 * 4]
+	ldr 	r9, [sp, #CTX_R9 * 4]
+	ldr	r10, [sp, #CTX_R10 * 4]
+	ldr	r11, [sp, #CTX_R11 * 4]
+	ldr	r12, [sp, #CTX_IP * 4]
+	ldr	r14, [sp, #CTX_LR * 4]	//loading link register into r14 
+	ldr	r12, [sp, #CTX_PC * 4]	//loading program counter into r12 (safe to store here)
+	add	sp, sp, #64	//pushes 16 more register spaces off of the stack
 
-	str     r4, [r0, #CTX_R4 * 4]	//storing non-volatile memory
-	str	r5, [r0, #CTX_R5 * 4]
-	str	r6, [r0, #CTX_R6 * 4]
-	str	r7, [r0, #CTX_R7 * 4]
-	str 	r8, [r0, #CTX_R8 * 4]
-	str	r9, [r0, #CTX_R9 * 4]
-	str	r10, [r0, #CTX_R10 * 4]
-	str	r11, [r0, #CTX_R11 * 4]
-	str 	r12, [r0, #CTX_IP * 4]	
-	str	r14, [r0, #CTX_LR * 4]  //storing r14 at 56 bytes above first adress in stack pointer/	
-	str 	r15, [r0, #CTX_PC * 4]  //storing r15 at 60 bytes above first adress in stack pointer
-	str	r13, [r0, #CTX_SP * 4]	//storing oldstack adress in r13
-
-
-	ldr	r4, [r1, #CTX_R4 * 4]	//loading non-volatile memory
-	ldr	r5, [r1, #CTX_R5 * 4]
-	ldr	r6, [r1, #CTX_R6 * 4]
-	ldr	r7, [r1, #CTX_R7 * 4]
-	ldr	r8, [r1, #CTX_R8 * 4]
-	ldr 	r9, [r1, #CTX_R9 * 4]
-	ldr	r10, [r1, #CTX_R10 * 4]
-	ldr	r11, [r1, #CTX_R11 * 4]
-	ldr	r12, [r1, #CTX_IP * 4]
-	ldr	r13, [r1, #CTX_SP * 4]	//
-	ldr	r14, [r1, #CTX_LR * 4]	//loading link register into r14 
-	ldr	r15, [r1, #CTX_PC * 4]	//loading program counter into r15 (jump)
-		
-
+	bx	r12	//moved the pc content to r12 for easier jump process
 				
 
 // TODO: Save callee-save ("non-volatile") registers.

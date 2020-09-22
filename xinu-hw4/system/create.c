@@ -130,7 +130,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     va_end(ap);
 
     //assign program counter, link register, and stack pointer
-       
+    saddr[CTX_SP] = &saddr[CTX_PC + 1]; // needs to point to the padding in the way we designed our ctswt 
     saddr[CTX_PC] = (ulong *)funcaddr;
     saddr[CTX_LR] = (ulong *)&userret;
 
