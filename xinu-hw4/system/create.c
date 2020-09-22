@@ -95,6 +95,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 
 
     //setting 16 registers to 0
+    //Jack felt funky about this (!)
 
     for (i = 0; i < 16; i++)
     {
@@ -114,12 +115,12 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 	//R0 - R3 
 	if(i < 4)
 	{
-		saddr[CTX_R0 + i] = va_arg(ap, int); 
+		saddr[CTX_R0 + i] = va_arg(ap, ulong); 
        	}
 	//padding registers
 	else
 	{
-		saddr[CTX_PC + (i - 3)] = va_arg(ap, int);
+		saddr[CTX_PC + (i - 3)] = va_arg(ap, ulong);
 		//tempPoint[i - 4] = va_arg(ap, int);
 	}	
     }

@@ -103,8 +103,21 @@ void testcases(void)
                      0x11111111, 0x22222222, 0x33333333, 0x44444444,
                      0x55555555, 0x66666666, 0x77777777, 0x88888888);
         printpcb(pid);
-        // TODO: print out stack with extra args
-        // TODO: ready(pid, RESCHED_YES);
+ 	
+	//getting process control block + access to pointer
+	int i;
+	pcb *ppcb = NULL;
+	pcb = &proctab[pid];
+
+	//printing out registers R0 - R15 + Pads
+	for(i = 0; i < 20; i++)
+	{
+		kprintf("%d\n", pcb->stkptr);
+		pcb->stkptr++; 
+	}
+	
+       // ready(pid, RESCHED_YES);
+
         break;
 
     case '2':
