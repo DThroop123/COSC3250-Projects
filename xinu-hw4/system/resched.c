@@ -34,7 +34,9 @@ syscall resched(void)
     newproc = &proctab[currpid];
     newproc->state = PRCURR;    /* mark it currently running    */
 
+
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
+
 
     /* The OLD process returns here when resumed. */
     return OK;
