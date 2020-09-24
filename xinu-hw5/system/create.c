@@ -131,8 +131,8 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
 
     //assign program counter, link register, and stack pointer
     saddr[CTX_SP] = &saddr[CTX_PC + 1]; // needs to point to the padding in the way we designed our ctswt 
-    saddr[CTX_PC] = (ulong *)funcaddr;
-    saddr[CTX_LR] = (ulong *)&userret;
+    saddr[CTX_PC] = funcaddr;
+    saddr[CTX_LR] = &userret;
 
     // TODO: Initialize process context.
     //		-make space on the stack for all 16 of your registers and set them to 0

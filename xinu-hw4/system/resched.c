@@ -34,7 +34,7 @@ syscall resched(void)
     newproc = &proctab[currpid];
     newproc->state = PRCURR;    /* mark it currently running    */
 
-
+    kprintf("[%d, %d]", oldproc - proctab, newproc - proctab);
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
 

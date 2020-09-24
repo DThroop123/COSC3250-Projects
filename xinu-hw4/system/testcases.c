@@ -21,7 +21,7 @@ int testmain(int argc, char **argv)
         kprintf("This is process %d\r\n", currpid);
 	
 	//resched() currently not working 
-	//resched();
+	resched();
     }
     return 0;
 }
@@ -37,6 +37,16 @@ void testbigargs(int a, int b, int c, int d, int e, int f, int g, int h)
     kprintf("f = 0x%08X\r\n", f);
     kprintf("g = 0x%08X\r\n", g);
     kprintf("h = 0x%08X\r\n", h);
+
+   	int i;
+	pcb *ppcb = NULL;
+	ppcb = &proctab[0];
+
+	//printing out registers R0 - R15 + Pads (reverse order of how it was drawn on paper)
+	for(i = 0; i < 16; i++)
+	{
+		kprintf("r%d: 0x%X\r\n", i, ((ulong *)ppcb->stkptr)[i]);
+	} 
 }
 
 void printpcb(int pid)
