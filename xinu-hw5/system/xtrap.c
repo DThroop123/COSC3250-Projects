@@ -6,6 +6,10 @@
 /* Embedded XINU, Copyright (C) 2007, 2020.  All rights reserved. */
 
 #include <xinu.h>
+#define GETC_ADDRESS 0x00008AF8
+#define PUTC_ADDRESS 0x00008B24
+#define YIELD_ADDRESS 0x00008A64
+#define NONE_ADDRESS 0x00008ADC 
 
 char *trap_names[] = {
     "Reset",
@@ -16,7 +20,7 @@ char *trap_names[] = {
     "IRQ Interrupt Request",
     "FIQ Interrupt Request"
 };
-
+ 
 /**
  * Generic XINU Trap (Interrupt) Handler.
  *
@@ -44,8 +48,27 @@ void xtrap(long *frame, int cause)
      */
     
     if (cause == ARM_EXCEPTION_SWI)
-    {
-	
+    {	
+	if(frame[13] == NONE_ADDRESS)
+    	{
+		frame[CTX_IP] = syscall_dispatch(0, frame);
+		return;
+	}
+	else if(frame[13] == YIELD_ADDRESS)
+	{
+		frame[CTX_IP] = syscall_dispatch(1, frame);
+		return;
+	}
+	else if(frame[13] == GETC_ADDRESS)
+	{
+		frame[CTX_IP] =	syscall_dispatch(8, frame);
+		return;
+	}
+	else if(frame [13] == PUTC_ADDRESS)
+	{
+		frame[CTX_IP] = syscall_dispatch(9, frame);
+		return;
+	} 	
     }
 
     /* If not an IRQ or SWI, fall through to generic exception handler */
