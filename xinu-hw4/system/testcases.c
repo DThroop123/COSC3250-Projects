@@ -8,6 +8,8 @@
 /* Embedded XINU, Copyright (C) 2007.  All rights reserved. */
 
 #include <xinu.h>
+#define NO_PADS 0
+#define PADS 1
 
 extern void main(int, char *);
 
@@ -20,7 +22,6 @@ int testmain(int argc, char **argv)
     {
         kprintf("This is process %d\r\n", currpid);
 	
-	//resched() currently not working 
 	resched();
     }
     return 0;
@@ -37,16 +38,6 @@ void testbigargs(int a, int b, int c, int d, int e, int f, int g, int h)
     kprintf("f = 0x%08X\r\n", f);
     kprintf("g = 0x%08X\r\n", g);
     kprintf("h = 0x%08X\r\n", h);
-
-   	int i;
-	pcb *ppcb = NULL;
-	ppcb = &proctab[0];
-
-	//printing out registers R0 - R15 + Pads (reverse order of how it was drawn on paper)
-	for(i = 0; i < 16; i++)
-	{
-		kprintf("r%d: 0x%X\r\n", i, ((ulong *)ppcb->stkptr)[i]);
-	} 
 }
 
 void printpcb(int pid)
@@ -83,6 +74,31 @@ void printpcb(int pid)
     kprintf("Stack length of process   : %8u \r\n", ppcb->stklen);
 }
 
+void printStack(int pid, int pads)
+{
+    int i;
+    pcb *ppcb = NULL;
+    ppcb = &proctab[pid];
+ 
+    //printing stack with PADS   
+    if(pads)
+    {
+    	for(i = 0; i < 20; i++)
+    	{
+	    kprintf("r%d:0x%X\r\n", i, ((ulong *)ppcb->stkptr)[i]);
+    	}	
+    }
+    //printing stack without PADS
+    else
+    {
+       	for(i = 0; i < 16; i++)
+	{
+		kprintf("r%d:0x%X\r\n", i, ((ulong *)ppcb->stkptr)[i]);
+	}
+    }
+}
+	 
+
 /**
  * testcases - called after initialization completes to test things.
  */
@@ -115,16 +131,7 @@ void testcases(void)
 
 	kprintf("Address of function in R15: 0x%X\r\n", &testmain);
 	
-	//Getting process control block + access to pointer
-	int a;
-	pcb *ppcb2 = NULL;
-	ppcb2 = &proctab[pid];
-	
-	//printing out R0 - R15 (reverse order)
-	for(a = 0; a < 16; a++)
-	{
-		kprintf("0x%X\r\n", ((ulong *)ppcb2->stkptr)[a]);
-	}
+	printStack(pid, NO_PADS);
 
         break;
 
@@ -137,16 +144,7 @@ void testcases(void)
  	
 	kprintf("Address of function in R15: 0x%X\r\n", &testbigargs);
 		
-	//getting process control block + access to pointer
-	int i;
-	pcb *ppcb = NULL;
-	ppcb = &proctab[pid];
-
-	//printing out registers R0 - R15 + Pads (reverse order of how it was drawn on paper)
-	for(i = 0; i < 20; i++)
-	{
-		kprintf("0x%X\r\n", ((ulong *)ppcb->stkptr)[i]);
-	}
+	printStack(pid, PADS);
 	
 	ready(pid, RESCHED_YES);
 	
@@ -173,16 +171,7 @@ void testcases(void)
 
 	kprintf("Address of function in R15: 0x%X\r\n", &testmain);
 	
-	//Getting process control block + access to pointer
-	int c;
-	pcb *ppcb3 = NULL;
-	ppcb3 = &proctab[pid];
-	
-	//printing out R0 - R15 (reverse order)
-	for(c = 0; c < 16; c++)
-	{
-		kprintf("0x%X\r\n", ((ulong *)ppcb3->stkptr)[c]);
-	}
+	printStack(pid, NO_PADS);	
 
         break;
 

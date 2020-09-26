@@ -42,6 +42,11 @@ void xtrap(long *frame, int cause)
      * 5) On return from syscall_dispatch(), setup proper return to
      *    instruction after SWI call, with return value in place.
      */
+    
+    if (cause == ARM_EXCEPTION_SWI)
+    {
+	
+    }
 
     /* If not an IRQ or SWI, fall through to generic exception handler */
     kprintf("\r\n\r\nXINU Exception [%s]\r\n", trap_names[cause]);

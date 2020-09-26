@@ -43,7 +43,7 @@ ctxsw:
 	str	r11, [sp, #CTX_R11 * 4]
 	str 	r12, [sp, #CTX_IP * 4]	
 	str	r14, [sp, #CTX_LR * 4]  //storing r14 at 56 bytes above first adress in stack pointer/	
-	str 	r15, [sp, #CTX_PC * 4]  //storing r15 at 60 bytes above first adress in stack pointer
+	str 	r14, [sp, #CTX_PC * 4]  //storing r15 at 60 bytes above first adress in stack pointer
 	str	r13, [sp, #CTX_SP * 4]	//storing oldstack adress in r13
 	str	sp, [r0] //stack pointer stores in r0
 	

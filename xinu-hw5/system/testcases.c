@@ -20,7 +20,7 @@ int testmain(int argc, char **argv)
     {
         kprintf("This is process %d\r\n", currpid);
 
-       // user_yield();
+        user_yield();
     }
     return 0;
 }
