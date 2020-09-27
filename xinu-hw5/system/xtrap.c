@@ -48,27 +48,14 @@ void xtrap(long *frame, int cause)
      */
     
     if (cause == ARM_EXCEPTION_SWI)
-    {	
-	if(frame[13] == NONE_ADDRESS)
-    	{
-		frame[CTX_IP] = syscall_dispatch(0, frame);
-		return;
-	}
-	else if(frame[13] == YIELD_ADDRESS)
-	{
-		frame[CTX_IP] = syscall_dispatch(1, frame);
-		return;
-	}
-	else if(frame[13] == GETC_ADDRESS)
-	{
-		frame[CTX_IP] =	syscall_dispatch(8, frame);
-		return;
-	}
-	else if(frame [13] == PUTC_ADDRESS)
-	{
-		frame[CTX_IP] = syscall_dispatch(9, frame);
-		return;
-	} 	
+    {
+
+	kprint("OP code in memory: %d\r\n", *frame[14]);
+	//Lower 24 bits of the frame 14 memory
+	//0xffffff & (*frame[24]) - opcode responsible (syscall number)
+	frame[CTX_R0] = syscall_dispatch(( 0xffffff & (*frame[14])), frame);
+	frame[CTX_LR] = frame[CTX_LR] + 4; //need to increment the LR so we can move past the expception call
+	return;	
     }
 
     /* If not an IRQ or SWI, fall through to generic exception handler */
