@@ -49,11 +49,12 @@ void xtrap(long *frame, int cause)
     
     if (cause == ARM_EXCEPTION_SWI)
     {
-
-	kprint("OP code in memory: %d\r\n", *frame[14]);
+	ulong temp;
+	temp = *(ulong *)frame[14];
+	//kprintf("\nOP code in memory: %d\r\n", temp);
 	//Lower 24 bits of the frame 14 memory
 	//0xffffff & (*frame[24]) - opcode responsible (syscall number)
-	frame[CTX_R0] = syscall_dispatch(( 0xffffff & (*frame[14])), frame);
+	frame[CTX_R0] = syscall_dispatch( 0xffffff & temp, frame);
 	frame[CTX_LR] = frame[CTX_LR] + 4; //need to increment the LR so we can move past the expception call
 	return;	
     }

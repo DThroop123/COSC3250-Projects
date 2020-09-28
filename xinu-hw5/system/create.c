@@ -177,6 +177,6 @@ static pid_typ newpid(void)
  */
 void userret(void)
 {
-    kprintf("We made it!");
+    //kprintf("We made it!");
     kill(currpid);
 }
