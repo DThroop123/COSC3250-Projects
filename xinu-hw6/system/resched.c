@@ -16,17 +16,17 @@ extern void ctxsw(void *, void *);
  * @return OK when the process is context switched back
  */
 
-unsigned int totalTickets()
+uint totalTickets()
 {
 	unsigned int total = 0;
 	int i;
 	
 	//obtaining the total number of tickets for all ready and current processes	
-	for(i = 0; i < NUMPROC; i++)
+	for(i = 0; i < NPROC; i++)
 	{
-		if((&proctab[i]->state == PRREADY) || (&proctab[i]->state == PRCURR))
+		if(((&proctab[i])->state == PRREADY) || ((&proctab[i])->state == PRCURR))
 		{
-			total += &proctab[i]->tickets;
+			total += (&proctab[i])->tickets;
 		}		
 	}
  	
@@ -34,19 +34,21 @@ unsigned int totalTickets()
 
 }
 
-ulong pickWinner(unsigned total)
+ulong pickWinner(uint total)
 {
+	//QUESTION: should we be using uint instead?????
 	unsigned int winner = random(total);	
 	int counter = 0;
 	int i;
 
-	for(i = 0; i < NUMPROC; i++)
+	for(i = 0; i < NPROC; i++)
 	{
-		counter += &proctab[i]->tickets;
+		counter += (&proctab[i])->tickets;
 		
 		if(counter > winner)
 		{
-			return &proctab[i]->pid;	
+			//QUESTION: how do we actually access the pid?
+			return ((&proctab[i])->stkptr)[?];	
 		}
 	}	
 }
