@@ -16,7 +16,7 @@ extern void ctxsw(void *, void *);
  * @return OK when the process is context switched back
  */
 
-uint totalTickets()
+uint totalTickets(void)
 {
 	unsigned int total = 0;
 	int i;
@@ -29,26 +29,35 @@ uint totalTickets()
 			total += (&proctab[i])->tickets;
 		}		
 	}
- 	
+
+	kprintf("Total: %d\r\n", total); 	
 	return total;
 
 }
 
-ulong pickWinner(uint total)
+int pickWinner(uint total)
 {
-	//QUESTION: should we be using uint instead?????
-	unsigned int winner = random(total);	
+
+	kprintf("Total (in pickWinner()): %d\r\n", total); 	
+	uint winner;
+	winner = random(total);
 	int counter = 0;
 	int i;
+
+	if(winner == 0)
+	{
+		winner += 1;
+	}
 
 	for(i = 0; i < NPROC; i++)
 	{
 		counter += (&proctab[i])->tickets;
 		
-		if(counter > winner)
+		if(counter >= winner)
 		{
-			//QUESTION: how do we actually access the pid?
-			return ((&proctab[i])->stkptr)[?];	
+			kprintf("Counter: %d\r\n", counter);
+			kprintf("Winner: %d\r\n", winner);	
+			return i;	
 		}
 	}	
 }
@@ -58,7 +67,7 @@ syscall resched(void)
 {
     pcb *oldproc;               /* pointer to old process entry */
     pcb *newproc;               /* pointer to new process entry */
-    unsigned int total = 0;
+    uint total = 0;
 
     oldproc = &proctab[currpid];
 
@@ -80,6 +89,7 @@ syscall resched(void)
 
     total = totalTickets();
     currpid = pickWinner(total);
+    kprintf("CurrPid: %d\r\n", currpid);
     remove(currpid);      
  
     newproc = &proctab[currpid];
@@ -89,6 +99,7 @@ syscall resched(void)
     preempt = QUANTUM;
 #endif
 
+    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab);
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */
