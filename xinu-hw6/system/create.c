@@ -63,6 +63,8 @@ syscall create(void *funcaddr, ulong ssize, char *name, uint tickets, ulong narg
     ppcb->state = PRSUSP;  
     ppcb->stkbase = (ulong *)(saddr - ssize);
     ppcb->tickets = tickets;
+    //Question: would we want to put this here?
+    //ppcb->procState = 0
 
     // 1.stack size = ssize
     // 2.stack name use the function strncpy(1. pointer to the string, 2.Paramenter being set, 3.Length of the string);

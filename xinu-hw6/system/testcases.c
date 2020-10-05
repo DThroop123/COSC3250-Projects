@@ -125,6 +125,12 @@ void testcases(void)
             resched();
         break;
 
+    case 'P':
+	//demonstrate premptive scheduling
+	//...
+	//
+	//
+
     default:
         break;
     }

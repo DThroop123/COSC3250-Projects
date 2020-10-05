@@ -35,6 +35,10 @@ uint totalTickets(void)
 
 }
 
+
+//CURRENT ISSUE: we currently can still select a process as a winner even when that process has been fully run and killed. Currently we are returning 'i' to become the current pid  and we are not sure if that is correct.
+
+
 int pickWinner(uint total)
 {
 
@@ -56,7 +60,9 @@ int pickWinner(uint total)
 		if(counter >= winner)
 		{
 			kprintf("Counter: %d\r\n", counter);
-			kprintf("Winner: %d\r\n", winner);	
+			kprintf("Winner: %d\r\n", winner);
+
+			//this is probably the issue	
 			return i;	
 		}
 	}	
