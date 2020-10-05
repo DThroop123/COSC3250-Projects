@@ -24,13 +24,13 @@ uint totalTickets(void)
 	//obtaining the total number of tickets for all ready and current processes	
 	for(i = 0; i < NPROC; i++)
 	{
-		if(((&proctab[i])->state == PRREADY) || ((&proctab[i])->state == PRCURR))
+		if((&proctab[i])->state == PRREADY)
 		{
 			total += (&proctab[i])->tickets;
 		}		
 	}
 
-	kprintf("Total: %d\r\n", total); 	
+	//kprintf("Total: %d\r\n", total); 	
 	return total;
 
 }
@@ -55,15 +55,19 @@ int pickWinner(uint total)
 
 	for(i = 0; i < NPROC; i++)
 	{
-		counter += (&proctab[i])->tickets;
+		if((&proctab[i])->state == PRREADY)
+		{	
+			
+			counter += (&proctab[i])->tickets;
 		
-		if(counter >= winner)
-		{
-			kprintf("Counter: %d\r\n", counter);
-			kprintf("Winner: %d\r\n", winner);
-
-			//this is probably the issue	
-			return i;	
+			if(counter >= winner)
+			{
+				//kprintf("Counter: %d\r\n", counter);
+				//kprintf("Winner: %d\r\n", winner);
+	
+				//this is probably the issue	
+				return i;	
+			}
 		}
 	}	
 }
@@ -95,7 +99,7 @@ syscall resched(void)
 
     total = totalTickets();
     currpid = pickWinner(total);
-    kprintf("CurrPid: %d\r\n", currpid);
+    //kprintf("CurrPid: %d\r\n", currpid);
     remove(currpid);      
  
     newproc = &proctab[currpid];
