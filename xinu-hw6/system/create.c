@@ -62,7 +62,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, uint tickets, ulong narg
     ppcb->stkptr = NULL;
     ppcb->state = PRSUSP;  
     ppcb->stkbase = (ulong *)(saddr - ssize);
-    ppcb->tickets = tickets;
+    ppcb->tickets = tickets; /*New field that stores the number of tickets for each process*/
     //Question: would we want to put this here?
     //ppcb->procState = 0
 
@@ -139,6 +139,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, uint tickets, ulong narg
 
    
     //moving processor state value into r12
+    	//Puts the device into system mode with the FIRQs disabled
     saddr[CTX_IP] = (ARM_MODE_SYS | ARM_F_BIT); 
 
     // TODO: Initialize process context.

@@ -16,6 +16,12 @@ extern void ctxsw(void *, void *);
  * @return OK when the process is context switched back
  */
 
+/*
+ * Helper function that preforms the operation of getting all the tickets 
+ * in the ready processes and totals them up.  
+ *
+ * */
+
 uint totalTickets(void)
 {
 	unsigned int total = 0;
@@ -24,6 +30,7 @@ uint totalTickets(void)
 	//obtaining the total number of tickets for all ready and current processes	
 	for(i = 0; i < NPROC; i++)
 	{
+		//Only gets the tickets from the processes that are in the ready state (current process is set to ready before this)
 		if((&proctab[i])->state == PRREADY)
 		{
 			total += (&proctab[i])->tickets;
@@ -35,18 +42,23 @@ uint totalTickets(void)
 }
 
 
-//CURRENT ISSUE: we currently can still select a process as a winner even when that process has been fully run and killed. Currently we are returning 'i' to become the current pid  and we are not sure if that is correct.
-
+/*
+ * Helper function that preforms the operation of choosing the random winning
+ * ticket and determines the process that holds this winning ticket
+ *
+ * */
 
 int pickWinner(uint total)
 {
 
-	//kprintf("Total (in pickWinner()): %d\r\n", total); 	
 	uint winner;
-	winner = random(total);
 	int counter = 0;
 	int i;
 
+	//Chooses the winning ticket randomly
+	winner = random(total);
+
+	//Adds one to the winning ticket number is 0 is picked becuase there are no processes that have zero tickets
 	if(winner == 0)
 	{
 		winner += 1;
@@ -54,17 +66,16 @@ int pickWinner(uint total)
 
 	for(i = 0; i < NPROC; i++)
 	{
+		//Makes sure that only the processes that are in the ready state are considered in the lottery
 		if((&proctab[i])->state == PRREADY)
 		{	
 			
 			counter += (&proctab[i])->tickets;
-		
+	
+			//Checks to see if the counter is greater than or equal to the winner
+				//if so then the process index is 'i' from the for loop	
 			if(counter >= winner)
 			{
-				//kprintf("Counter: %d\r\n", counter);
-				//kprintf("Winner: %d\r\n", winner);
-	
-				//this is probably the issue	
 				return i;	
 			}
 		}
@@ -96,19 +107,18 @@ syscall resched(void)
      * Set currpid to the new process.
      */
 
-    total = totalTickets();
-    currpid = pickWinner(total);
-    //kprintf("CurrPid: %d\r\n", currpid);
-    remove(currpid);      
+    total = totalTickets(); /*Finds the total number of tickets*/
+    currpid = pickWinner(total); /*Sets the current pid to the process that contains the winning ticket*/
+    remove(currpid); /*Removes the new currpid from the ready list becuase it is going to be  the current running process*/      
  
     newproc = &proctab[currpid];
-    newproc->state = PRCURR;    /* mark it currently running    */
+    newproc->state = PRCURR;    /* mark it currently running*/
 
 #if PREEMPT
     preempt = QUANTUM;
 #endif
 
-    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab);
+    //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab);
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */

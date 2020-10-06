@@ -42,18 +42,18 @@ ctxsw:
 	str	r10, [sp, #CTX_R10 * 4]
 	str	r11, [sp, #CTX_R11 * 4]
         mrs     r12, cpsr
-        str 	r12, [sp, #CTX_IP * 4] 	
-	str	r14, [sp, #CTX_LR * 4]  //storing r14 at 56 bytes above first adress in stack pointer/	
-	str 	r14, [sp, #CTX_PC * 4]  //storing r15 at 60 bytes above first adress in stack pointer
-	str	r13, [sp, #CTX_SP * 4]	//storing oldstack adress in r13
-	str	sp, [r0] //stack pointer stores in r0
+        str 	r12, [sp, #CTX_IP * 4] 	//Storing r12 at 52 bytes above first address in stack pointer that contains  the mode and FIRQs being disabled for the process
+	str	r14, [sp, #CTX_LR * 4]  //storing r14 at 56 bytes above first address in stack pointer/	
+	str 	r14, [sp, #CTX_PC * 4]  //storing r15 at 60 bytes above first address in stack pointer
+	str	r13, [sp, #CTX_SP * 4]	//storing oldstack address in r13
+	str	sp, [r0] 		//stack pointer stores in r0
 	
-	ldr	sp, [r1] //stack pointer into r1 can do math to locate the sp by add sp, sp, #64 
+	ldr	sp, [r1] 		//stack pointer into r1 can do math to locate the sp by add sp, sp, #64 
 	ldr	r0, [sp, #CTX_R0 *4]
 	ldr	r1, [sp, #CTX_R1 *4]
 	ldr	r2, [sp, #CTX_R2 *4]
 	ldr	r3, [sp, #CTX_R3 *4]
-	ldr	r4, [sp, #CTX_R4 * 4] //loading non-volatile memory
+	ldr	r4, [sp, #CTX_R4 * 4] 	//loading non-volatile memory
 	ldr	r5, [sp, #CTX_R5 * 4]
 	ldr	r6, [sp, #CTX_R6 * 4]
 	ldr	r7, [sp, #CTX_R7 * 4]
@@ -61,14 +61,14 @@ ctxsw:
 	ldr 	r9, [sp, #CTX_R9 * 4]
 	ldr	r10, [sp, #CTX_R10 * 4]
 	ldr	r11, [sp, #CTX_R11 * 4]
-	msr     cpsr_c, r12
+	msr     cpsr_c, r12		//stores the mode and FIRQs into the CPSR register on the device
 	ldr	r12, [sp, #CTX_IP * 4]
 	ldr	r14, [sp, #CTX_LR * 4]	//loading link register into r14 
 	ldr	r12, [sp, #CTX_PC * 4]	//loading program counter into r12 (safe to store here)
 //	ldr	sp,  [sp, #CTX_SP * 4]
-	add	sp, sp, #64	//pushes 16 more register spaces off of the stack
+	add	sp, sp, #64		//pushes 16 more register spaces off of the stack
 
-	bx	r12	//moved the pc content to r12 for easier jump process
+	bx	r12			//moved the pc content to r12 for easier jump process
 				
 
 // TODO: Save callee-save ("non-volatile") registers.
