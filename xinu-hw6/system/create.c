@@ -137,6 +137,10 @@ syscall create(void *funcaddr, ulong ssize, char *name, uint tickets, ulong narg
     saddr[CTX_PC] = funcaddr;
     saddr[CTX_LR] = &userret;
 
+   
+    //moving processor state value into r12
+    saddr[CTX_IP] = (ARM_MODE_SYS | ARM_F_BIT); 
+
     // TODO: Initialize process context.
     //		-make space on the stack for all 16 of your registers and set them to 0
     //		-r15 (instruction pointer) aka program counter -- address of the function you want to run (argument to the create function funcaddr)

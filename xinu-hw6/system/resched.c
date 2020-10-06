@@ -30,7 +30,6 @@ uint totalTickets(void)
 		}		
 	}
 
-	//kprintf("Total: %d\r\n", total); 	
 	return total;
 
 }
@@ -42,7 +41,7 @@ uint totalTickets(void)
 int pickWinner(uint total)
 {
 
-	kprintf("Total (in pickWinner()): %d\r\n", total); 	
+	//kprintf("Total (in pickWinner()): %d\r\n", total); 	
 	uint winner;
 	winner = random(total);
 	int counter = 0;

@@ -2,7 +2,7 @@
  * @file testcases.c
  * @provides testcases
  *
- * TA-BOT:MAILTO
+ * TA-BOT:MAILTO daniel.throop@marquette.edu brea.brennan@marquette.edu 
  *
  */
 /* Embedded XINU, Copyright (C) 2007.  All rights reserved. */
