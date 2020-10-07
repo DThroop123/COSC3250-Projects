@@ -93,13 +93,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, uint tickets, ulong narg
         *--saddr = 0;
     }
     
-    //void* tempPoint;
-    //tempPoint = saddr;
-
-
     //setting 16 registers to 0
-    //Jack felt funky about this (!)
-
     for (i = 0; i < 16; i++)
     {
 	*--saddr = 0;
@@ -185,6 +179,5 @@ static pid_typ newpid(void)
  */
 void userret(void)
 {
-    //kprintf("We made it!");
     kill(currpid);
 }

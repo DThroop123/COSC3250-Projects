@@ -65,7 +65,6 @@ ctxsw:
 	ldr	r12, [sp, #CTX_IP * 4]
 	ldr	r14, [sp, #CTX_LR * 4]	//loading link register into r14 
 	ldr	r12, [sp, #CTX_PC * 4]	//loading program counter into r12 (safe to store here)
-//	ldr	sp,  [sp, #CTX_SP * 4]
 	add	sp, sp, #64		//pushes 16 more register spaces off of the stack
 
 	bx	r12			//moved the pc content to r12 for easier jump process

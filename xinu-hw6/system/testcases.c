@@ -83,6 +83,7 @@ void testcases(void)
     kprintf("1) Test user_getc syscall\r\n");
     kprintf("2) Test user_putc syscall\r\n");
     kprintf("3) Create three processes that test user_yield syscall\r\n");
+    kprintf("P) Testing preemptive scheduling with timing inturrupts\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -127,9 +128,15 @@ void testcases(void)
 
     case 'P':
 	//demonstrate premptive scheduling
-	//...
-	//
-	//
+		//This means that it would interrupt what the job is currently doing after the quantum is over to pick a new winner
+	ready(create((void *)testbigargs, INITSTK, "BigArgs", 15, 8,0x00000000, 0x11111111, 0x22222222, 0x33333333, 0x44444444, 
+			0x55555555, 0x66666666, 0x77777777, 0x88888888),RESCHED_NO);
+
+	ready(create((void *)testmain, INITSTK, "MAIN4", 5, 2, 0, NULL),  RESCHED_NO);
+	
+	while (numproc>1)
+		resched();
+	break;
 
     default:
         break;
