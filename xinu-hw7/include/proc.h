@@ -37,6 +37,7 @@
 #define RESCHED_YES 1           /**< tell ready to reschedule           */
 #define RESCHED_NO  0           /**< tell ready not to reschedule       */
 
+#ifndef __ASSEMBLER__
 /** 
  * Check for invalid process ids.  Note that interrupts must be disabled
  * for the condition to hold true between statements.
@@ -52,9 +53,15 @@ typedef struct pentry
     void *stkptr;               /**< saved stack pointer                     */
     void *stkbase;              /**< base of run time stack                  */
     int stklen;                 /**< stack length                            */
+    uint tickets;               /**< number of tickets                       */
     char name[PNMLEN];          /**< process name                            */
-    unsigned int tickets;	/**< number of tickets			     */
 } pcb;
+
+extern struct pentry proctab[];
+extern volatile int numproc;    /**< currently active processes              */
+extern volatile int currpid[];  /**< currently executing process             */
+
+#endif                          /*  __ASSEMBLER__  */
 
 /* process initialization constants */
 #define INITSTK  65536      /**< initial process stack size              */
@@ -62,9 +69,5 @@ typedef struct pentry
 #define INITRET  userret    /**< processes return address                */
 #define MINSTK   4096       /**< minimum process stack size              */
 #define NULLSTK  MINSTK     /**< null process stack size                 */
-
-extern struct pentry proctab[];
-extern int numproc;         /**< currently active processes              */
-extern int currpid;         /**< currently executing process             */
 
 #endif                          /* _PROC_H_ */
