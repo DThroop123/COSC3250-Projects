@@ -1,12 +1,4 @@
 /**
- ** COSC 3250 - Project 3
- ** This file provides the basis of character I/0 for our embedded operating system.
- ** @author Daniel Throop Brea Brennan
- ** Instructor: Dennis Brylow
- ** TA-BOT:MAILTO daniel.throop@marquette.edu brea.brennan@marquette.edu 
- **/
-
-/**
  * @file kprintf.c
  */
 
@@ -148,9 +140,20 @@ syscall kprintf(const char *format, ...)
 {
     int retval;
     va_list ap;
+    static volatile int lock;
+
+    //Set the lock to be unlocked at first
+    lock = LOCK_UNLOCKED;
+    
+    //Aquire the lock to protect the following code
+    lock_acquire(&lock);
 
     va_start(ap, format);
     retval = _doprnt(format, ap, (int (*)(int, int))kputc, 0);
     va_end(ap);
+
+    //Release the lock to unprotect the previous code
+    lock_release(&lock);
+
     return retval;
 }

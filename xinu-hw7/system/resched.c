@@ -89,13 +89,13 @@ syscall resched(void)
     pcb *newproc;               /* pointer to new process entry */
     uint total = 0;
 
-    oldproc = &proctab[currpid];
+    oldproc = &proctab[currpid[getcpuid()]];
 
     /* place current process at end of ready queue */
     if (PRCURR == oldproc->state)
     {
         oldproc->state = PRREADY;
-        enqueue(currpid, readylist);
+        enqueue(currpid[getcpuid()], readylist);
     }
 
     /**
@@ -108,14 +108,14 @@ syscall resched(void)
      */
 
     total = totalTickets(); /*Finds the total number of tickets*/
-    currpid = pickWinner(total); /*Sets the current pid to the process that contains the winning ticket*/
-    remove(currpid); /*Removes the new currpid from the ready list becuase it is going to be  the current running process*/      
+    currpid[getcpuid()] = pickWinner(total); /*Sets the current pid to the process that contains the winning ticket*/
+    remove(currpid[getcpuid()]); /*Removes the new currpid from the ready list becuase it is going to be  the current running process*/      
  
-    newproc = &proctab[currpid];
+    newproc = &proctab[currpid[getcpuid()]];
     newproc->state = PRCURR;    /* mark it currently running*/
 
 #if PREEMPT
-    preempt = QUANTUM;
+    preempt[getcpuid()] = QUANTUM;
 #endif
 
     //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab);
