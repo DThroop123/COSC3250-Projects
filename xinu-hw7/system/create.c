@@ -52,7 +52,9 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
         return SYSERR;
     }
 
-    numproc++;
+    // numproc++;
+    // I think this is what we want
+    atomic_increment(&numproc); 
     ppcb = &proctab[pid];
 
     // TODO: Setup PCB entry for new process. (seting the fileds in the struct in ../include/proc.h  [DONE]

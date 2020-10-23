@@ -24,7 +24,9 @@ syscall kill(int pid)
 
     ppcb = &proctab[pid]; //pointer to the process control block
 
-    --numproc;
+    // --numproc;
+    // I think this is what we want
+    atomic_decrement(&numproc);
 
     switch (ppcb->state)
     {
