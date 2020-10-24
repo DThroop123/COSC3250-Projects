@@ -61,12 +61,12 @@ int pickWinner(uint total)
         //if tickets <= 3 its the null process for one of the cores
         //jusr assign the winner to be the process in index 5?
         //or would we just keep calling random()?
-	if(winner <= 3)
+	/*if(winner <= 3)
 	{
-		winner = 5;
-	}
+		winner = 4;
+	}*/
 
-	for(i = 0; i < NPROC; i++)
+	for(i = 4; i < NPROC; i++)
 	{
 		//Makes sure that only the processes that are in the ready state are considered in the lottery
 		if((&proctab[i])->state == PRREADY)
@@ -84,7 +84,8 @@ int pickWinner(uint total)
 	}
 
 	//if the function gets to here, it has not found an eligible winner
-	//this would return the 
+	//this would return the
+	kprintf("YES\n\r"); 
 	return (getcpuid());	
 		
 }
