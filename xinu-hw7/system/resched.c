@@ -58,10 +58,12 @@ int pickWinner(uint total)
 	//Chooses the winning ticket randomly
 	winner = random(total);
 
-	//Adds one to the winning ticket number is 0 is picked becuase there are no processes that have zero tickets
-	if(winner == 0)
+        //if tickets <= 3 its the null process for one of the cores
+        //jusr assign the winner to be the process in index 5?
+        //or would we just keep calling random()?
+	if(winner <= 3)
 	{
-		winner += 1;
+		winner = 5;
 	}
 
 	for(i = 0; i < NPROC; i++)
@@ -79,7 +81,12 @@ int pickWinner(uint total)
 				return i;	
 			}
 		}
-	}	
+	}
+
+	//if the function gets to here, it has not found an eligible winner
+	//this would return the 
+	return (getcpuid());	
+		
 }
 
 
@@ -123,9 +130,10 @@ syscall resched(void)
     preempt[getcpuid()] = QUANTUM;
 #endif
 
-    //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab);
-
+    //release lock
     lock_release(&lock);
+
+    //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab) 
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */
