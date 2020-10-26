@@ -57,7 +57,7 @@ void nulluser(void)
         /* Unpark the other cores */
         for (i = 1; i < NCORES; i++)
         {
-            unparkcore(i, (void *)nulluser, NULL);
+           // unparkcore(i, (void *)nulluser, NULL);
         }
     }
     else
@@ -66,11 +66,13 @@ void nulluser(void)
     }
 
     coreinit(mycore);
+    // kprintf("Made is past coreinit");
 
     /* Call the main program */
     sprintf(pname, "MAIN%d", mycore);
     ready(create((void *)main, INITSTK, INITPRIO, pname, 2, 0, NULL),
 		    RESCHED_YES);
+    // kprintf("Main program is readied");
 
     enable();
     /* null process has nothing else to do but cannot exit  */

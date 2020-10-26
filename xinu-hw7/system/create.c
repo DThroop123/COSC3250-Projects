@@ -158,19 +158,20 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
 
 /**
  * Obtain a new (free) process id.
- * @return a free process id, SYSERR if all ids are used
+ * @return a free proceiss id, SYSERR if all ids are used
  */
 static pid_typ newpid(void)
 {
     pid_typ pid;                /* process id to return     */
-    static pid_typ nextpid = 0;
 
-    for (pid = 0; pid < NPROC; pid++)
+    for (pid = NCORES; pid < NPROC; pid++)
     {                           /* check all NPROC slots    */
-        nextpid = (nextpid + 1) % NPROC;
-        if (PRFREE == proctab[nextpid].state)
+        if (PRFREE == proctab[pid].state)
         {
-            return nextpid;
+		if(_atomic_compareAndSwapStrong(&(proctab[pid].state), PRFREE, PRSUSP))
+		{
+			return pid;
+		}
         }
     }
     return SYSERR;
