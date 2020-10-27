@@ -18,7 +18,7 @@ int testmain(int argc, char **argv)
 
     for (i = 0; i < 10; i++)
     {
-        kprintf("This is process %d\r\n", currpid);
+        kprintf("This is process %d\r\n", currpid[getcpuid()]);
 
         user_yield();
     }
@@ -116,11 +116,11 @@ void testcases(void)
 
     case '3':
         // Create three copies of a process, and let them play.
-        ready(create((void *)testmain, INITSTK, "MAIN1", 5, 2, 0, NULL),
+        ready(create((void *)testmain, INITSTK, 5, "MAIN1", 2, 0, NULL),
               RESCHED_NO);
-        ready(create((void *)testmain, INITSTK, "MAIN2", 5, 2, 0, NULL),
+        ready(create((void *)testmain, INITSTK, 5, "MAIN1", 2, 0, NULL),
               RESCHED_NO);
-        ready(create((void *)testmain, INITSTK, "MAIN3", 5, 2, 0, NULL),
+        ready(create((void *)testmain, INITSTK, 5, "MAIN3", 2, 0, NULL),
               RESCHED_YES);
         while (numproc > 1)
             resched();
@@ -129,7 +129,7 @@ void testcases(void)
     case 'P':
 	//demonstrate premptive scheduling
 		//This means that it would interrupt what the job is currently doing after the quantum is over to pick a new winner
-	ready(create((void *)testbigargs, INITSTK, "BigArgs", 15, 8,0x00000000, 0x11111111, 0x22222222, 0x33333333, 0x44444444, 
+	ready(create((void *)testbigargs, INITSTK, 15, "BigArgs", 8,0x00000000, 0x11111111, 0x22222222, 0x33333333, 0x44444444, 
 			0x55555555, 0x66666666, 0x77777777, 0x88888888),RESCHED_NO);
 
 	ready(create((void *)testmain, INITSTK, "MAIN4", 5, 2, 0, NULL),  RESCHED_NO);

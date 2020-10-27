@@ -45,7 +45,7 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
     /* round up to even boundary    */
     saddr = (ulong *)getstk(ssize);     /* allocate new stack and pid   */
     pid = newpid(); //gets the next pid in the queue to be used
-
+    //kprintf("%d\n\r", pid);
     /* a little error checking      */
     if ((((ulong *)SYSERR) == saddr) || (SYSERR == pid))
     {
@@ -62,7 +62,7 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
     ppcb->stklen = ssize;
     strncpy(ppcb->name, name, PNMLEN);
     ppcb->stkptr = NULL;
-    ppcb->state = PRSUSP;  
+   // ppcb->state = PRSUSP;  
     ppcb->stkbase = (ulong *)(saddr - ssize);
     ppcb->tickets = tickets; /*New field that stores the number of tickets for each process*/
     //Question: would we want to put this here?
@@ -135,23 +135,9 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
 
    
     //moving processor state value into r12
-    	//Puts the device into system mode with the FIRQs disabled
+    //Puts the device into system mode with the FIRQs disabled
     saddr[CTX_IP] = (ARM_MODE_SYS | ARM_F_BIT); 
 
-    // TODO: Initialize process context.
-    //		-make space on the stack for all 16 of your registers and set them to 0
-    //		-r15 (instruction pointer) aka program counter -- address of the function you want to run (argument to the create function funcaddr)
-    //		-r14 (Link Register) - keep track of the function that calls it - pass the value of &userret
-    //		-r13 (stack pointer)
-    //		-r12-r0 (content registers)
-    //
-    // TODO:  Place arguments into activation record.
-    //        See K&R 7.3 for example using va_start, va_arg and
-    //        va_end macros for variable argument functions.
-    //			-set the pcd's stkptr to the last register r0
-    //			-add the arguments to their desinated areas 
-    //
-    // The stack grows down in length so the larger the address the closer to the top (begining) of the stack it     
 
     return pid;
 }
@@ -166,14 +152,12 @@ static pid_typ newpid(void)
 
     for (pid = NCORES; pid < NPROC; pid++)
     {                           /* check all NPROC slots    */
-        if (PRFREE == proctab[pid].state)
-        {
 		if(_atomic_compareAndSwapStrong(&(proctab[pid].state), PRFREE, PRSUSP))
 		{
 			return pid;
 		}
-        }
-    }
+    }        
+
     return SYSERR;
 }
 
@@ -182,5 +166,5 @@ static pid_typ newpid(void)
  */
 void userret(void)
 {
-    kill(currpid);
+    kill(currpid[getcpuid()]);
 }

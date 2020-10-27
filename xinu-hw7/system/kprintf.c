@@ -140,10 +140,8 @@ syscall kprintf(const char *format, ...)
 {
     int retval;
     va_list ap;
-    static volatile int lock;
+    static volatile int lock = LOCK_UNLOCKED;
 
-    //Set the lock to be unlocked at first
-    lock = LOCK_UNLOCKED;
     
     //Aquire the lock to protect the following code
     lock_acquire(&lock);

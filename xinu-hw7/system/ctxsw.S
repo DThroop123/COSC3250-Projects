@@ -61,8 +61,8 @@ ctxsw:
 	ldr 	r9, [sp, #CTX_R9 * 4]
 	ldr	r10, [sp, #CTX_R10 * 4]
 	ldr	r11, [sp, #CTX_R11 * 4]
-	msr     cpsr_c, r12		//stores the mode and FIRQs into the CPSR register on the device
 	ldr	r12, [sp, #CTX_IP * 4]
+       	msr     cpsr_c, r12	 
 	ldr	r14, [sp, #CTX_LR * 4]	//loading link register into r14 
 	ldr	r12, [sp, #CTX_PC * 4]	//loading program counter into r12 (safe to store here)
 	add	sp, sp, #64		//pushes 16 more register spaces off of the stack

@@ -91,14 +91,13 @@ syscall resched(void)
     pcb *oldproc;               /* pointer to old process entry */
     pcb *newproc;               /* pointer to new process entry */
     uint total = 0;
-    static volatile int lock;
+    static volatile int lock = LOCK_UNLOCKED;
 
-    lock = LOCK_UNLOCKED;	/* set new lock */
     lock_acquire(&lock); 
 
     // This now supports multi-core
+    //kprintf("%d\n\r", currpid[getcpuid()]);
     oldproc = &proctab[currpid[getcpuid()]];
-
     /* place current process at end of ready queue */
     if (PRCURR == oldproc->state)
     {

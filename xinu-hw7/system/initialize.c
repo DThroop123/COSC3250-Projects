@@ -57,7 +57,7 @@ void nulluser(void)
         /* Unpark the other cores */
         for (i = 1; i < NCORES; i++)
         {
-           // unparkcore(i, (void *)nulluser, NULL);
+           unparkcore(i, (void *)nulluser, NULL);
         }
     }
     else
