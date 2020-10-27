@@ -128,7 +128,7 @@ syscall resched(void)
     //release lock
     lock_release(&lock);
 
-    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
+    //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */
