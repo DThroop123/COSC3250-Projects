@@ -16,7 +16,7 @@ int testmain(int argc, char **argv)
     int i = 0;
     kprintf("Hello XINU World!\r\n");
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 10; i++)
     {
         kprintf("This is process %d\r\n", currpid[getcpuid()]);
 
