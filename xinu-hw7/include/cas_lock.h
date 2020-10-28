@@ -9,7 +9,7 @@
 
 /* Spinlock state definitions */
 #define LOCK_UNLOCKED		0x00
-#define LOCK_LOCKED		0xFF
+#define LOCK_LOCKED		    0x01
 
 #ifndef __ASSEMBLER__
 

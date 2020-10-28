@@ -14,14 +14,15 @@
  */
 syscall lock_acquire(volatile int *lock)
 {
+    irqmask im;
+    im = disable();
     while (FALSE == _atomic_compareAndSwapStrong(lock,
                                                  LOCK_UNLOCKED,
-                                                 LOCK_LOCKED))
+                                                 LOCK_LOCKED | (im & ARM_I_BIT)))
     {                           // do nothing while cas fails
     }
 
     return OK;
-
 }
 
 /**
@@ -31,6 +32,13 @@ syscall lock_acquire(volatile int *lock)
  */
 syscall lock_release(volatile int *lock)
 {
+    irqmask im;
+    im = *lock & ARM_I_BIT;
+
     *lock = LOCK_UNLOCKED;
+    
+    if(!im)
+        enable();
+
     return OK;
 }
