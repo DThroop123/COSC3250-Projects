@@ -16,7 +16,7 @@ int testmain(int argc, char **argv)
     int i = 0;
     kprintf("Hello XINU World!\r\n");
 
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 3; i++)
     {
         kprintf("This is process %d\r\n", currpid[getcpuid()]);
 
@@ -82,7 +82,7 @@ void testcases(void)
     kprintf("0) Test user_none syscall\r\n");
     kprintf("1) Test user_getc syscall\r\n");
     kprintf("2) Test user_putc syscall\r\n");
-    kprintf("3) Create three processes that test user_yield syscall\r\n");
+    kprintf("3) Create five processes that test user_yield syscall\r\n");
     kprintf("P) Testing preemptive scheduling with timing inturrupts\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
@@ -115,14 +115,19 @@ void testcases(void)
         break;
 
     case '3':
-        // Create three copies of a process, and let them play.
+        // Create five copies copies of a process, and let them play.
+        // This will ensure that each core has at least 1 process from the ready list besides their null process
         ready(create((void *)testmain, INITSTK, 5, "MAIN1", 2, 0, NULL),
               RESCHED_NO);
-        ready(create((void *)testmain, INITSTK, 5, "MAIN1", 2, 0, NULL),
+        ready(create((void *)testmain, INITSTK, 5, "MAIN2", 2, 0, NULL),
               RESCHED_NO);
         ready(create((void *)testmain, INITSTK, 5, "MAIN3", 2, 0, NULL),
-              RESCHED_YES);
-        while (numproc > 1)
+              RESCHED_NO);
+        ready(create((void *)testmain, INITSTK, 5, "MAIN4", 2, 0, NULL),
+              RESCHED_NO);
+        ready(create((void *)testmain, INITSTK, 5, "MAIN5", 2, 0, NULL),
+              RESCHED_NO);
+        while (numproc > 4)
             resched();
         break;
 
@@ -132,9 +137,9 @@ void testcases(void)
 	ready(create((void *)testbigargs, INITSTK, 15, "BigArgs", 8,0x00000000, 0x11111111, 0x22222222, 0x33333333, 0x44444444, 
 			0x55555555, 0x66666666, 0x77777777, 0x88888888),RESCHED_NO);
 
-	ready(create((void *)testmain, INITSTK, "MAIN4", 5, 2, 0, NULL),  RESCHED_NO);
+	ready(create((void *)testmain, INITSTK, "MAIN6", 5, 2, 0, NULL),  RESCHED_NO);
 	
-	while (numproc>1)
+	while (numproc > 4)
 		resched();
 	break;
 
