@@ -102,7 +102,11 @@ syscall resched(void)
     if (PRCURR == oldproc->state)
     {
         oldproc->state = PRREADY;
-        enqueue(currpid[getcpuid()], readylist);
+        
+	if(currpid[getcpuid()] >= 4)
+	{
+		enqueue(currpid[getcpuid()], readylist);
+    	}
     }
 
     /**
@@ -116,8 +120,11 @@ syscall resched(void)
 
     total = totalTickets(); /*Finds the total number of tickets*/
     currpid[getcpuid()] = pickWinner(total); /*Sets the current pid to the process that contains the winning ticket*/
-    remove(currpid[getcpuid()]); /*Removes the new currpid from the ready list becuase it is going to be  the current running process*/      
- 
+    
+    if(currpid[getcpuid()] >= 4)
+    {    
+    	remove(currpid[getcpuid()]); /*Removes the new currpid from the ready list becuase it is going to be  the current running process*/      
+    }
     newproc = &proctab[currpid[getcpuid()]];
     newproc->state = PRCURR;    /* mark it currently running*/
 
@@ -127,8 +134,8 @@ syscall resched(void)
 
     //release lock
     lock_release(&lock);
-
-    //kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
+//    kprintf("CORE: %d\r\n", getcpuid());
+//    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */

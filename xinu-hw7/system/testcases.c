@@ -16,7 +16,7 @@ int testmain(int argc, char **argv)
     int i = 0;
     kprintf("Hello XINU World!\r\n");
 
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 3; i++)
     {
         kprintf("This is process %d\r\n", currpid[getcpuid()]);
 
@@ -127,9 +127,9 @@ void testcases(void)
               RESCHED_NO);
         ready(create((void *)testmain, INITSTK, 5, "MAIN5", 2, 0, NULL),
               RESCHED_NO);
-        while (numproc > 4)
-            resched();
-        break;
+        while (numproc > 5)
+		resched();
+	break;
 
     case 'P':
 	//demonstrate premptive scheduling
@@ -137,9 +137,9 @@ void testcases(void)
 	ready(create((void *)testbigargs, INITSTK, 15, "BigArgs", 8,0x00000000, 0x11111111, 0x22222222, 0x33333333, 0x44444444, 
 			0x55555555, 0x66666666, 0x77777777, 0x88888888),RESCHED_NO);
 
-	ready(create((void *)testmain, INITSTK, "MAIN6", 5, 2, 0, NULL),  RESCHED_NO);
+	ready(create((void *)testmain, INITSTK, 5, "MAIN6", 2, 0, NULL),  RESCHED_NO);
 	
-	while (numproc > 4)
+	while (numproc > 5)
 		resched();
 	break;
 
