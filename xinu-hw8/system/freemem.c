@@ -27,7 +27,7 @@ syscall freemem(void *memptr, ulong nbytes)
     /* make sure block is in heap */
     if ((0 == nbytes)
         || ((ulong)memptr < freelist.base)
-        || ((ulong)memptr > freelist.base + freelist.bound)
+        || ((ulong)memptr > freelist.base + freelist.bound))
     {
         return SYSERR;
     }
@@ -39,6 +39,8 @@ syscall freemem(void *memptr, ulong nbytes)
      *      - Acquire freelist lock
      *      - Find where the memory block should
      *        go back onto the freelist (based on address)
+     *        		- the first memblock would move the head to the deallocated space, then create a new membloack in the list for the remaining
+     *        		  main part of the first list
      *      - Find top of previous memblock
      *      - Make sure block is not overlapping on prev or next blocks
      *      - Coalesce with previous block if adjacent
