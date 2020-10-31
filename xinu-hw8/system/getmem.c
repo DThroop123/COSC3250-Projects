@@ -45,10 +45,18 @@ void *getmem(ulong nbytes)
      */
 
      lock_acquire(&(freelist.lock));
-      
-     while((pmblock->next) != NULL)
-     {
+    
+     //set *curr to head of the freelist
+     curr = &(freelist.head);
 
+      
+     while((curr->next) != NULL)
+     {
+     	//check if current memblock is best fit
+	if((curr->length) >= nbytes)
+	{
+	    				
+	}
 
      } 
      
