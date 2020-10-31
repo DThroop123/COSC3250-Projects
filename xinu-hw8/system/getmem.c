@@ -44,5 +44,17 @@ void *getmem(ulong nbytes)
      *      - return memory address if successful
      */
 
+     lock_acquire(&(freelist.lock));
+      
+     while((pmblock->next) != NULL)
+     {
+
+
+     } 
+     
+
+     lock_release(&(freelist.lock));
+     
+
     return (void *)SYSERR;
 }
