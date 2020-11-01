@@ -47,22 +47,36 @@ void *getmem(ulong nbytes)
      lock_acquire(&(freelist.lock));
     
      //set *curr to head of the freelist
-     curr = &(freelist.head);
+     curr = freelist.head;
 
-      
+     //traverse the free list 
      while((curr->next) != NULL)
      {
      	//check if current memblock is best fit
 	if((curr->length) >= nbytes)
 	{
-	    				
+             //intialize new memblck
+	     register memblck *newblck;
+
+             //assign new memlist head
+             newblck->next = memhead.head       
+             memhead.head = newblck;
+
+	     //save prev block and calc length
+	     prev = curr->next
+	     newblck->length = (prev->length) - nbytes
+
+             
+	     //calc and assign left over, honestly not really sure what to do here.
+
+             //release memory lock
+             lock_release(&(freelist.lock));
+             
+	     //return adress of new memblock
+             return (&newblck)
 	}
 
      } 
-     
-
-     lock_release(&(freelist.lock));
-     
-
+    
     return (void *)SYSERR;
 }

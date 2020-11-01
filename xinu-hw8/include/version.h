@@ -1,1 +1,1 @@
-#define VERSION "(Embedded Xinu) (arm-rpi3) #277 (dthroop@morbius) Fri Oct 30 21:23:08 CDT 2020"
+#define VERSION "(Embedded Xinu) (arm-rpi3) #280 (dthroop@morbius) Sat Oct 31 20:16:11 CDT 2020"
