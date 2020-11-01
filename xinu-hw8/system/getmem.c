@@ -56,24 +56,23 @@ void *getmem(ulong nbytes)
 	if((curr->length) >= nbytes)
 	{
              //intialize new memblck
-	     register memblck *newblck;
+	     register memblk *newblck;
 
              //assign new memlist head
-             newblck->next = memhead.head       
+             newblck->next = memhead.head;       
              memhead.head = newblck;
 
 	     //save prev block and calc length
-	     prev = curr->next
-	     newblck->length = (prev->length) - nbytes
-
-             
+	     prev = curr->next;
+	     newblck->length = (prev->length) - nbytes;
+ 
 	     //calc and assign left over, honestly not really sure what to do here.
 
              //release memory lock
              lock_release(&(freelist.lock));
              
 	     //return adress of new memblock
-             return (&newblck)
+             return (&newblck);
 	}
 
      } 
