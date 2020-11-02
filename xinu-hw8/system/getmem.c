@@ -46,8 +46,9 @@ void *getmem(ulong nbytes)
 
      lock_acquire(&(freelist.lock));
     
-     //set *curr to head of the freelist
+     //set *curr and *prev to head of the freelist
      curr = freelist.head;
+     prev = freelist.head;
 
      //traverse the free list 
      while((curr->next) != NULL)
@@ -56,19 +57,27 @@ void *getmem(ulong nbytes)
 	if((curr->length) >= nbytes)
 	{
              //intialize new memblck
-	     register memblk *newblck;
-
-	     //save prev block and assign length
-	     newblck->length = 
+	     struct memblock *newblck;
  
-	     //calc and assign left over, honestly not really sure what to do here.
+             //assign new head to newblck
+      	     freelist.head = newblck;
+             
+             //assign nbytes
+             newblck->length = nbytes;
 
+             //update free list length
+	     freelist.length = (prev->length) - nbytes;
+	      
              //release memory lock
              lock_release(&(freelist.lock));
              
 	     //return adress of new memblock
              return (&newblck);
 	}
+
+        //set new vars
+	prev = curr;
+        curr = curr->next;
 
      } 
     
