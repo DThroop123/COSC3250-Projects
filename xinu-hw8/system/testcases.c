@@ -38,6 +38,26 @@ void testbigargs(int a, int b, int c, int d, int e, int f, int g, int h)
     kprintf("h = 0x%08X\r\n", h);
 }
 
+void printFreeList()
+{
+
+   struct memblck *curr;
+
+   curr = freelist.head;
+
+   while(curr != NULL)
+   {
+	kprintf("\n");
+	kprintf("%d\r\n", curr->length);	//Length
+	kprintf("0x%08X\r\n", curr->next);	//Next address
+	kprintf("\n\n");
+   }
+
+   curr = curr->next
+
+}
+
+
 void printpcb(int pid)
 {
     pcb *ppcb = NULL;
@@ -45,7 +65,7 @@ void printpcb(int pid)
     /* Using the process ID, access it in the PCB table. */
     ppcb = &proctab[pid];
 
-    /* Printing PCB */
+     /* Printing PCB */
     kprintf("Process name		  : %s \r\n", ppcb->name);
 
     switch (ppcb->state)
