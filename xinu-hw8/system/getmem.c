@@ -51,7 +51,7 @@ void *getmem(ulong nbytes)
      prev = freelist.head;
 
      //traverse the free list 
-     while((curr->next) != NULL)
+     while(curr != NULL)
      {
      	//check if current memblock is best fit
 	if((curr->length) >= nbytes)
@@ -60,10 +60,20 @@ void *getmem(ulong nbytes)
 	     struct memblock *newblck;
  
              //assign new head to newblck
-      	     freelist.head = newblck;
-             
-             //assign nbytes
-             newblck->length = nbytes;
+             newblck = curr;
+
+	     //moves the next pointer to the new allocated end of the block
+	     prev->next = nbytes + curr;
+
+	     //move the curr to the end of the remaining block allocated
+	     curr = prev->next;
+
+	     //Update curent next and length
+	     curr->next = newblck->next;
+	     curr->length = newblock->length - nbytes;
+
+	     //Assign nbytes
+	     newblck->length = nbytes;
 
              //update free list length
 	     freelist.length = (prev->length) - nbytes;
