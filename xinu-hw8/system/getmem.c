@@ -58,13 +58,8 @@ void *getmem(ulong nbytes)
              //intialize new memblck
 	     register memblk *newblck;
 
-             //assign new memlist head
-             newblck->next = memhead.head;       
-             memhead.head = newblck;
-
-	     //save prev block and calc length
-	     prev = curr->next;
-	     newblck->length = (prev->length) - nbytes;
+	     //save prev block and assign length
+	     newblck->length = 
  
 	     //calc and assign left over, honestly not really sure what to do here.
 
