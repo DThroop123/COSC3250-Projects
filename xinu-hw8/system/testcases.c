@@ -48,12 +48,11 @@ void printFreeList()
    while(curr != NULL)
    {
 	kprintf("\n");
-	kprintf("%d\r\n", curr->length);	//Length
-	kprintf("0x%08X\r\n", curr->next);	//Next address
-	kprintf("\n\n");
+	kprintf("%d\r\n", (freelist.length));	//Length
+	kprintf("0x%08X\r\n", (freelist.head->next));	//Next address
    }
 
-   curr = curr->next
+   curr = freelist.head->next;
 
 }
 
@@ -104,6 +103,7 @@ void testcases(void)
     kprintf("2) Test user_putc syscall\r\n");
     kprintf("3) Create five processes that test user_yield syscall\r\n");
     kprintf("P) Testing preemptive scheduling with timing inturrupts\r\n");
+    kprintf("4) Testing the Freelist printing function and getmem of 100 bytes\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -161,6 +161,13 @@ void testcases(void)
 	
 	while (numproc > 5)
 		resched();
+	break;
+
+    case '4':
+	//prints the free list before allocating 100 bytes using getmem
+	printFreeList();
+	getmem(100);
+	printFreeList();
 	break;
 
     default:

@@ -70,7 +70,7 @@ void *getmem(ulong nbytes)
 
 	     //Update curent next and length
 	     curr->next = newblck->next;
-	     curr->length = newblock->length - nbytes;
+	     curr->length = newblck->length - nbytes;
 
 	     //Assign nbytes
 	     newblck->length = nbytes;

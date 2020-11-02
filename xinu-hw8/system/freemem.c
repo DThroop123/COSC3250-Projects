@@ -51,12 +51,12 @@ syscall freemem(void *memptr, ulong nbytes)
     lock_aquire(&(freelist.lock));
 
     //set curr and prev to head of freelist
-    curr = freelist.head;
-    prev = freelist.head;
+    //curr = freelist.head;
+    //prev = freelist.head;
 
     //traverse the freelist
     while((curr->next) != NULL)
-    {
+    {/*
          //we find the address
          if((&curr) == (&block))
          {
@@ -71,7 +71,7 @@ syscall freemem(void *memptr, ulong nbytes)
          //update vars
 	 prev = curr;
 	 curr = curr->next;
-
+*/
     } 
     
 
