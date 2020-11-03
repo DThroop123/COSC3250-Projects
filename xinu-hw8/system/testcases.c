@@ -45,7 +45,6 @@ void printFreeList()
 
    while(curr != NULL)
    {
-	kprintf("\n");
 	kprintf("%d\r\n", (curr->length));	//Length
 	kprintf("0x%08X\r\n", (curr));	//current address
 
@@ -102,7 +101,10 @@ void testcases(void)
     kprintf("2) Test user_putc syscall\r\n");
     kprintf("3) Create five processes that test user_yield syscall\r\n");
     kprintf("P) Testing preemptive scheduling with timing inturrupts\r\n");
-    kprintf("4) Testing the Freelist printing function and getmem of 100 bytes\r\n");
+    kprintf("4) Testing the Freelist printing function and getmem of 0x100 and 0x200 bytes\r\n");
+    kprintf("5) Testing the getmem function with 0x1000, 0x2000 and 0x3000 bytes of requested allocated space\r\n");
+    kprintf("6) Testing freemem on a getmem space of 0x1000 bytes\r\n");
+    kprintf("7) Testing freemem on getmem cases of test 5 in random roder\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -165,20 +167,48 @@ void testcases(void)
     case '4':
 	//prints the free list before allocating 100 bytes using getmem
 	kprintf("\r\n");
-	kprintf("Free list before mallocing:\r\n");
+	kprintf("Free list before getmem call:\r\n");
 	printFreeList();
-        kprintf("\r\n");
-        kprintf("Mallocing 100 bytes...\r\n");
+	kprintf("\r\n");
+
         getmem(0x100);
-	//kprintf("Freelist head: 0x%08x\r\n", freelist.head);
-        //kprintf("Freelist head->next: 0x%08x\r\n", (freelist.head)->next);
-        //kprintf("Freelist head->next->next: 0x%08x\r\n", ((freelist.head)->next)->next);
-        kprintf("\r\n");
-	kprintf("Free list after mallocing 100 bytes:\r\n");
+	kprintf("Free list after getmem of 0x100 bytes:\r\n");
 	printFreeList();
+	kprintf("\r\n");
+
         getmem(0x200);
-        kprintf("Free list after mallocing 200 more bytes:\r\n");
+        kprintf("Free list after getmem of 0x200 more bytes:\r\n");
         printFreeList();
+	break;
+
+    case '5':
+	//Allocating major amounts of space
+	kprintf("\r\n");
+	kprintf("Freelist before getmem call:\r\n");
+	printFreeList();
+	kprintf("\r\n");
+
+	getmem(0x1000);
+	kprintf("Freelist after getmem of 0x1000 bytes:\r\n");
+	printFreeList();
+	kprintf("\r\n");
+
+	getmem(0x2000);
+	kprintf("Freelist after getmem of 0x2000:\r\n");
+	printFreeList();
+	kprintf("\r\n");
+
+	getmem(0x3000);
+	kprintf("Freelist after getmem of 0x3000:\r\n");
+	printFreeList();
+	break;
+
+    case '6':
+	//Testing freemem on getmem of 0x1000 bytes 
+	break;
+
+    case '7':
+	//testing freemem on getmem of test case 5 in random order
 	break;
 
     default:
