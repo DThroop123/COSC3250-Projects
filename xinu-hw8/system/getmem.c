@@ -1,11 +1,10 @@
-/**
+/*
  * @file getmem.c
  *
  */
 /* Embedded Xinu, Copyright (C) 2009, 2020.  All rights reserved. */
 
 #include <xinu.h>
-
 /**
  * Allocate heap memory.
  *
@@ -20,7 +19,7 @@
  */
 void *getmem(ulong nbytes)
 {
-    register memblk *prev, *curr, *leftover;
+    memblk *prev, *curr, *leftover;
 
     if (0 == nbytes)
     {
@@ -47,42 +46,40 @@ void *getmem(ulong nbytes)
      lock_acquire(&(freelist.lock));
     
      //set *curr and *prev to head of the freelist
-     curr = freelist.head;
-     prev = freelist.head;
+     curr = (struct memblock *)(&(freelist.head));
+     prev = (struct memblock *)&freelist;
+     memhead * freehead = &freelist;
+
+     kprintf("curr next: 0x%08x\r\n", curr->next);
 
      //traverse the free list 
      while(curr != NULL)
      {
+	kprintf("curr next: 0x%08x\r\n", curr->next);
+
      	//check if current memblock is best fit
-	if((curr->length) >= nbytes)
-	{
-             //intialize new memblck
-	     struct memblock *newblck;
- 
-             //assign new head to newblck
-             newblck = curr;
-
+	if((curr->length) > nbytes)
+	{ 
 	     //moves the next pointer to the new allocated end of the block
-	     prev->next = nbytes + curr;
-
-	     //move the curr to the end of the remaining block allocated
-	     curr = prev->next;
-
-	     //Update curent next and length
-	     curr->next = newblck->next;
-	     curr->length = newblck->length - nbytes;
-
-	     //Assign nbytes
-	     newblck->length = nbytes;
-
+	     leftover = (struct memblock *)(nbytes + ((ulong)curr));
+	     leftover->length = (curr->length) - nbytes;
+             //kprintf("Leftover length: %d\r\n", leftover->length);
+             kprintf("Leftover: 0x%08x\r\n", leftover);
+             kprintf("curr: 0x%08x\r\n", curr);
+ 
              //update free list length
-	     freelist.length = (prev->length) - nbytes;
+	     freehead->length = freehead->length - nbytes;
+
+             //set new links
+             leftover->next = curr->next;
+             prev->next = leftover;
+	     kprintf("curr next: 0x%08x\r\n", curr->next);
 	      
              //release memory lock
              lock_release(&(freelist.lock));
              
 	     //return adress of new memblock
-             return (&newblck);
+             return (&curr);
 	}
 
         //set new vars

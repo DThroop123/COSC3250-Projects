@@ -8,7 +8,6 @@
 /* Embedded XINU, Copyright (C) 2007.  All rights reserved. */
 
 #include <xinu.h>
-
 extern void main(int, char *);
 
 int testmain(int argc, char **argv)
@@ -40,20 +39,21 @@ void testbigargs(int a, int b, int c, int d, int e, int f, int g, int h)
 
 void printFreeList()
 {
-
-   struct memblck *curr;
+   struct memblock *curr;
 
    curr = freelist.head;
 
    while(curr != NULL)
    {
 	kprintf("\n");
-	kprintf("%d\r\n", (freelist.length));	//Length
-	kprintf("0x%08X\r\n", (freelist.head->next));	//Next address
+	kprintf("%d\r\n", (curr->length));	//Length
+	kprintf("0x%08X\r\n", (&curr));	//current address
+
+	//reset vars
+	curr = curr->next;
    }
 
-   curr = freelist.head->next;
-
+   kprintf("We made it out\r\n");
 }
 
 
@@ -165,8 +165,17 @@ void testcases(void)
 
     case '4':
 	//prints the free list before allocating 100 bytes using getmem
+	kprintf("\r\n");
+	kprintf("Free list before mallocing:\r\n");
 	printFreeList();
-	getmem(100);
+        kprintf("\r\n");
+        kprintf("Mallocing 100 bytes...\r\n");
+        getmem(100);
+	kprintf("Freelist head: 0x%08x\r\n", freelist.head);
+        kprintf("Freelist head->next: 0x%08x\r\n", (freelist.head)->next);
+        kprintf("Freelist head->next->next: 0x%08x\r\n", ((freelist.head)->next)->next);
+        kprintf("\r\n");
+	kprintf("Free list after mallocing 100 bytes:\r\n");
 	printFreeList();
 	break;
 
