@@ -46,16 +46,16 @@ void *getmem(ulong nbytes)
      lock_acquire(&(freelist.lock));
     
      //set *curr and *prev to head of the freelist
-     curr = (struct memblock *)(&(freelist.head));
+     curr = (struct memblock *)(freelist.head);
      prev = (struct memblock *)&freelist;
      memhead * freehead = &freelist;
 
-     kprintf("curr next: 0x%08x\r\n", curr->next);
+     //kprintf("curr next: 0x%08x\r\n", curr->next);
 
      //traverse the free list 
      while(curr != NULL)
      {
-	kprintf("curr next: 0x%08x\r\n", curr->next);
+	//kprintf("curr next: 0x%08x\r\n", curr->next);
 
      	//check if current memblock is best fit
 	if((curr->length) > nbytes)
@@ -64,8 +64,8 @@ void *getmem(ulong nbytes)
 	     leftover = (struct memblock *)(nbytes + ((ulong)curr));
 	     leftover->length = (curr->length) - nbytes;
              //kprintf("Leftover length: %d\r\n", leftover->length);
-             kprintf("Leftover: 0x%08x\r\n", leftover);
-             kprintf("curr: 0x%08x\r\n", curr);
+             //kprintf("Leftover: 0x%08x\r\n", leftover);
+             //kprintf("curr: 0x%08x\r\n", curr);
  
              //update free list length
 	     freehead->length = freehead->length - nbytes;
@@ -73,13 +73,13 @@ void *getmem(ulong nbytes)
              //set new links
              leftover->next = curr->next;
              prev->next = leftover;
-	     kprintf("curr next: 0x%08x\r\n", curr->next);
+	     //kprintf("curr next: 0x%08x\r\n", curr->next);
 	      
              //release memory lock
              lock_release(&(freelist.lock));
              
 	     //return adress of new memblock
-             return (&curr);
+             return (curr);
 	}
 
         //set new vars

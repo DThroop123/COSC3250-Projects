@@ -47,13 +47,12 @@ void printFreeList()
    {
 	kprintf("\n");
 	kprintf("%d\r\n", (curr->length));	//Length
-	kprintf("0x%08X\r\n", (&curr));	//current address
+	kprintf("0x%08X\r\n", (curr));	//current address
 
 	//reset vars
 	curr = curr->next;
    }
 
-   kprintf("We made it out\r\n");
 }
 
 
@@ -170,13 +169,16 @@ void testcases(void)
 	printFreeList();
         kprintf("\r\n");
         kprintf("Mallocing 100 bytes...\r\n");
-        getmem(100);
-	kprintf("Freelist head: 0x%08x\r\n", freelist.head);
-        kprintf("Freelist head->next: 0x%08x\r\n", (freelist.head)->next);
-        kprintf("Freelist head->next->next: 0x%08x\r\n", ((freelist.head)->next)->next);
+        getmem(0x100);
+	//kprintf("Freelist head: 0x%08x\r\n", freelist.head);
+        //kprintf("Freelist head->next: 0x%08x\r\n", (freelist.head)->next);
+        //kprintf("Freelist head->next->next: 0x%08x\r\n", ((freelist.head)->next)->next);
         kprintf("\r\n");
 	kprintf("Free list after mallocing 100 bytes:\r\n");
 	printFreeList();
+        getmem(0x200);
+        kprintf("Free list after mallocing 200 more bytes:\r\n");
+        printFreeList();
 	break;
 
     default:
