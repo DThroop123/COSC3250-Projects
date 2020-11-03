@@ -33,6 +33,12 @@ void *malloc(ulong size)
       *      4) Return proper pointer to base of free memory region
       */
 
+    //Aquire memory with the getmem syscall
+    pmem->next = getmem(size);
+
+    //Set the length of the pmem block
+    pmem->length = size + pmem;
+
 
     return NULL;
 }
