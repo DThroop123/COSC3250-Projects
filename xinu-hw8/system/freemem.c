@@ -22,8 +22,7 @@
 syscall freemem(void *memptr, ulong nbytes)
 {
     //we added a curr pointer to traverse
-    register struct memblock *block, *curr, *next, *prev;
-    ulong top;
+    register struct memblock *block, *next, *prev;
 
     /* make sure block is in heap */
     if ((0 == nbytes)
@@ -48,42 +47,35 @@ syscall freemem(void *memptr, ulong nbytes)
      *      - Coalesce with next block if adjacent
      */
 
-    lock_aquire(&(freelist.lock));
+    lock_acquire(&(freelist.lock));
 
-    //set curr and prev to head of freelist
-    //curr = freelist.head;
-    //prev = freelist.head;
+    //set next and prev
+    next = (struct memblock *)freelist.head;
+    prev = (struct memblock *)&freelist; 
 
     //traverse the freelist
-    while((curr->next) != NULL)
-    {/*
-         //we find the address
-         if((&curr) == (&block))
-         {
-             //move head of free list
-             freelist.head = (&block);
+    while(next != NULL)
+    {
+       if((prev < block) && (block < next))
+       {
+            //insert block
+            prev->next = block;
+            block->next = next;
+     
+            block->length = nbytes;
 
-             //add the freed bytes back onto length
-             freelist.length += nbytes;   
+            //update freeslist length
+            freelist.length = freelist.length + nbytes;
+            break;      
+       }
 
-         }
-      
-         //update vars
-	 prev = curr;
-	 curr = curr->next;
-*/
+     //update vars
+     prev = next;
+     next = next->next;
+
     } 
-    
 
-
-
-
-
-
-
-
-
-
+    lock_release(&(freelist.lock));
 
     return OK;
 }

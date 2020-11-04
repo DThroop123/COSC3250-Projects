@@ -17,7 +17,7 @@
  */
 void *malloc(ulong size)
 {
-    struct memblock *pmem;
+    struct memblock *pmem, *finalAddress, *returnAddress;
 
     /* we don't allocate 0 bytes. */
     if (0 == size)
@@ -33,12 +33,27 @@ void *malloc(ulong size)
       *      4) Return proper pointer to base of free memory region
       */
 
-    //Aquire memory with the getmem syscall
-    pmem->next = getmem(size);
+
+    //Setting pmem next to itself
+    pmem->next = pmem;
 
     //Set the length of the pmem block
-    pmem->length = size + pmem;
+    pmem->length = size;
+
+    //obtain address from getmem()
+    //kprintf("size + pmem: %d\r\n", size + sizeof(struct memblock));
+    pmem = getmem(size + sizeof(struct memblock));
+    //kprintf("Return Address: 0x%08x\r\n", pmem);
 
 
-    return NULL;
+    //calc final address
+    finalAddress =  1 + pmem;
+    //kprintf("Final Address: 0x%08x\r\n", finalAddress);
+    //kprintf("Size of struct block: %d\r\n", sizeof(struct memblock) );
+	
+
+    //return getmem() - 8 bytes
+    return finalAddress; 
+
+  
 }

@@ -43,7 +43,7 @@ syscall create(void *funcaddr, ulong ssize, uint tickets, char *name, ulong narg
     ssize = (ulong)(ssize + 3) & 0xFFFFFFFC; //rounding up the stack size to a nice number
    
     /* round up to even boundary    */
-    saddr = (ulong *)getstk(ssize);     /* allocate new stack and pid   */
+    saddr = (ulong *)getmem(ssize);     /* allocate new stack and pid   */
     pid = newpid(); //gets the next pid in the queue to be used
     //kprintf("%d\n\r", pid);
     /* a little error checking      */

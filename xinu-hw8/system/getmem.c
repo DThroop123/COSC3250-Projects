@@ -73,11 +73,13 @@ void *getmem(ulong nbytes)
              //set new links
              leftover->next = curr->next;
              prev->next = leftover;
-	     //kprintf("curr next: 0x%08x\r\n", curr->next);
-	      
+	    
+             //kprintf("curr next: 0x%08x\r\n", curr->next)
+             curr->length = nbytes;
+
              //release memory lock
              lock_release(&(freelist.lock));
-             
+
 	     //return adress of new memblock
              return (curr);
 	}

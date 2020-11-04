@@ -32,6 +32,7 @@ syscall kill(int pid)
     {
     case PRCURR:
         ppcb->state = PRFREE;   /* suicide */
+        freemem(ppcb, ppcb->stklen);
         resched(); //looks for the next procces in the que and put it on the cpu
 
     case PRREADY:
@@ -39,7 +40,10 @@ syscall kill(int pid)
 
     default:
         ppcb->state = PRFREE;
+        freemem(ppcb, ppcb->stklen);
     }
+    
+
 
     return OK;
 }

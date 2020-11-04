@@ -9,6 +9,7 @@
 
 #include <xinu.h>
 extern void main(int, char *);
+struct memblock *temp, *temp2, *temp3;
 
 int testmain(int argc, char **argv)
 {
@@ -103,8 +104,8 @@ void testcases(void)
     kprintf("P) Testing preemptive scheduling with timing inturrupts\r\n");
     kprintf("4) Testing the Freelist printing function and getmem of 0x100 and 0x200 bytes\r\n");
     kprintf("5) Testing the getmem function with 0x1000, 0x2000 and 0x3000 bytes of requested allocated space\r\n");
-    kprintf("6) Testing freemem on a getmem space of 0x1000 bytes\r\n");
-    kprintf("7) Testing freemem on getmem cases of test 5 in random roder\r\n");
+    kprintf("6) Testing freemem on a getmem space of 0x100 bytes\r\n");
+    kprintf("7) Testing free() and malloc() cases of test 3 in random roder\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -188,27 +189,59 @@ void testcases(void)
 	printFreeList();
 	kprintf("\r\n");
 
-	getmem(0x1000);
+	malloc(0x1000);
 	kprintf("Freelist after getmem of 0x1000 bytes:\r\n");
 	printFreeList();
 	kprintf("\r\n");
 
-	getmem(0x2000);
+	malloc(0x2000);
 	kprintf("Freelist after getmem of 0x2000:\r\n");
 	printFreeList();
 	kprintf("\r\n");
 
-	getmem(0x3000);
+	malloc(0x3000);
 	kprintf("Freelist after getmem of 0x3000:\r\n");
 	printFreeList();
 	break;
 
     case '6':
-	//Testing freemem on getmem of 0x1000 bytes 
+	//Testing freemem on getmem of 0x1000 bytes
+        kprintf("Free list before getmeming 256 bytes:\r\n");
+        printFreeList();
+        temp = getmem(0x100);
+        printFreeList();
+        freemem(temp);
+        kprintf("Freememing...\r\n");
+        printFreeList();
 	break;
 
     case '7':
-	//testing freemem on getmem of test case 5 in random order
+	//testing free on malloc of test case 3 in random order
+	kprintf("Free list before mallocing:\r\n");
+        printFreeList();
+        temp = malloc(0x100);
+        kprintf("Free list after mallocing 256 bytes:\r\n");
+        printFreeList();
+        kprintf("Freeing...\r\n");
+        free(temp);
+        printFreeList();
+
+        printFreeList();
+        kprintf("Free list after mallocing 768 bytes:\r\n");
+        temp2 = malloc(0x300);
+        printFreeList();
+        kprintf("Freeing...\r\n");
+        free(temp2);
+        printFreeList();
+
+        printFreeList();
+        kprintf("Free list after mallocing 2048 bytes:\r\n");
+        temp3 = malloc(0x600);
+        kprintf("Freeing...\r\n"); 
+        printFreeList();
+        free(temp3);
+        printFreeList();
+
 	break;
 
     default:
