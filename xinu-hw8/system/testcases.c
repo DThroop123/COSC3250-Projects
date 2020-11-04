@@ -179,7 +179,7 @@ void testcases(void)
 
         getmem(0x200);
         kprintf("Free list after getmem of 0x200 more bytes:\r\n");
-        printFreeList();
+       printFreeList();
 	break;
 
     case '5':
@@ -210,7 +210,7 @@ void testcases(void)
         printFreeList();
         temp = getmem(0x100);
         printFreeList();
-        freemem(temp);
+        freemem(temp, 0x100);
         kprintf("Freememing...\r\n");
         printFreeList();
 	break;
