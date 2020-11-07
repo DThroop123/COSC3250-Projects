@@ -33,8 +33,13 @@ struct syscall_info
 #define SYSCALL_MBOXFREE   14 /**< Free a mailbox                   */
 #define SYSCALL_MBOXRECV   15 /**< Receive message from mailbox     */
 #define SYSCALL_MBOXSEND   16 /**< Send message to mailbox          */
-
-extern const struct syscall_info syscall_table[];
+#define SYSCALL_GETMEM     17 /**< Allocate heap memory 	    */
+#define SYSCALL_FREEMEM    18 /**< Free heap memory                 */
+#define SYSCALL_PTCREATE   19 /**< Pthread create 		    */
+#define SYSCALL_PTJOIN     20 /**< Pthread join 		    */
+#define SYSCALL_PTLOCK     21 /**< mutex lock 	 	            */
+#define SYSCALL_PTUNLOCK   22 /**< mutex unlock 		    */
+#define SYSCALL_PTTRYLOCK  23 /**< mutex trylock    		    */
 extern int nsyscalls;
 
 /* Prototypes from user mode system calls */
@@ -42,5 +47,5 @@ syscall user_none(void);
 syscall user_yield(void);
 syscall user_getc(int descrp);
 syscall user_putc(int descrp, char character);
-
+syscall 
 #endif                          /* __SYSCALL_H__ */

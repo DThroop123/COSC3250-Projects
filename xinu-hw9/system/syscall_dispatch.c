@@ -22,6 +22,13 @@ syscall sc_none(int *);
 syscall sc_yield(int *);
 syscall sc_getc(int *);
 syscall sc_putc(int *);
+syscall sc_getmem(int *);
+syscall sc_freemem(int *);
+syscall sc_ptcreate(int *);
+syscall sc_ptjoin(int *);
+syscall sc_ptlock(int *);
+syscall sc_ptunlock(int *);
+syscall sc_pttrylock(int *);
 
 /* table for determining how to call syscalls */
 const struct syscall_info syscall_table[] = {
@@ -38,6 +45,17 @@ const struct syscall_info syscall_table[] = {
     { 2, (void *)sc_none },     /* SYSCALL_SEEK      = 10 */
     { 4, (void *)sc_none },     /* SYSCALL_CONTROL   = 11 */
     { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
+    { 1, (void *)sc_none },     /*                        */
+    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
+    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
+    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
+    { 1, (void *)sc_none },     /* SYSCALL_GETMEM    = 17 */
+    { 2, (void *)sc_none },     /* SYSCALL_FREEMEM   = 18 */
+    { 4, (void *)sc_none },     /* SYSCALL_PTCREATE  = 19 */
+    { 2, (void *)sc_none },     /* SYSCALL_PTJOIN    = 20 */
+    { 1, (void *)sc_none },     /* SYSCALL_PTLOCK    = 21 */
+    { 1, (void *)sc_none },     /* SYSCALL_PTUNLOCK  = 22 */
+    { 1, (void *)sc_none },     /* SYSCALL_PTTRYLOCK = 23 */
 };
 
 int nsyscall = sizeof(syscall_table) / sizeof(struct syscall_info);
@@ -127,3 +145,11 @@ syscall user_putc(int descrp, char character)
 {
     SYSCALL(PUTC);
 }
+
+syscall sc_getmem(int *);
+syscall sc_freemem(int *);
+syscall sc_ptcreate(int *);
+syscall sc_ptjoin(int *);
+syscall sc_ptlock(int *);
+syscall sc_ptunlock(int *);
+syscall sc_pttrylock(int *);
