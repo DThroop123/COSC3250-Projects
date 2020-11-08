@@ -44,18 +44,18 @@ const struct syscall_info syscall_table[] = {
     { 2, (void *)sc_putc },     /* SYSCALL_PUTC      = 9  */
     { 2, (void *)sc_none },     /* SYSCALL_SEEK      = 10 */
     { 4, (void *)sc_none },     /* SYSCALL_CONTROL   = 11 */
-    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
-    { 1, (void *)sc_none },     /*                        */
-    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
-    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
-    { 1, (void *)sc_none },     /* SYSCALL_GETDEV    = 12 */
-    { 1, (void *)sc_none },     /* SYSCALL_GETMEM    = 17 */
-    { 2, (void *)sc_none },     /* SYSCALL_FREEMEM   = 18 */
-    { 4, (void *)sc_none },     /* SYSCALL_PTCREATE  = 19 */
-    { 2, (void *)sc_none },     /* SYSCALL_PTJOIN    = 20 */
-    { 1, (void *)sc_none },     /* SYSCALL_PTLOCK    = 21 */
-    { 1, (void *)sc_none },     /* SYSCALL_PTUNLOCK  = 22 */
-    { 1, (void *)sc_none },     /* SYSCALL_PTTRYLOCK = 23 */
+    { 1, (void *)sc_none },     /* SYSCALL_NONE      = 12 */
+    { 1, (void *)sc_none },     /* SYSCALL_NONE      = 13 */
+    { 1, (void *)sc_none },     /* SYSCALL_NONE      = 14 */
+    { 1, (void *)sc_none },     /* SYSCALL_NONE      = 15 */
+    { 1, (void *)sc_none },     /* SYSCALL_NONE      = 16 */
+    { 1, (void *)sc_getmem },   /* SYSCALL_GETMEM    = 17 */
+    { 2, (void *)sc_freemem },  /* SYSCALL_FREEMEM   = 18 */
+    { 4, (void *)sc_ptcreate }, /* SYSCALL_PTCREATE  = 19 */
+    { 2, (void *)sc_ptjoin },   /* SYSCALL_PTJOIN    = 20 */
+    { 1, (void *)sc_ptlock },   /* SYSCALL_PTLOCK    = 21 */
+    { 1, (void *)sc_ptunlock }, /* SYSCALL_PTUNLOCK  = 22 */
+    { 1, (void *)sc_ptrylock }, /* SYSCALL_PTTRYLOCK = 23 */
 };
 
 int nsyscall = sizeof(syscall_table) / sizeof(struct syscall_info);
@@ -146,8 +146,36 @@ syscall user_putc(int descrp, char character)
     SYSCALL(PUTC);
 }
 
-syscall sc_getmem(int *);
-syscall sc_freemem(int *);
+/**
+ *  * syscall wrapper for getmem().
+ *   * @param args expands to: int descrp, ulong nbytes 
+ *    */
+syscall sc_getmem(int *args)
+{
+    int descrp = SCARG(int, args);
+    ulong nbytes = SCARG(ulong, args);
+
+    if (0 == descrp)
+        return getmem(nbytes);
+    return SYSERR;
+}
+
+/**
+ * syscall wrapper for freemem().
+ * @param args expands to: int descrp, void *memptr, ulong nbytes 
+ **/ 
+syscall sc_freemem(int *args)
+{
+    int descrp = SCARG(int, args);
+    void *memptr = SCARG(void *, args);
+    ulong nbytes = SCARG(ulong, nbytes);
+
+    if (0 == descrp)
+        return freemem(memptr, nbytes);
+    return SYSERR;
+
+}
+
 syscall sc_ptcreate(int *);
 syscall sc_ptjoin(int *);
 syscall sc_ptlock(int *);
