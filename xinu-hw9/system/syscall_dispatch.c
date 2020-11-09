@@ -146,6 +146,10 @@ syscall user_putc(int descrp, char character)
     SYSCALL(PUTC);
 }
 
+
+//we dont want to make getmem and freemem have user sycalls correct? (?)
+
+
 /**
  *  * syscall wrapper for getmem().
  *   * @param args expands to: int descrp, ulong nbytes 
@@ -160,6 +164,11 @@ syscall sc_getmem(int *args)
     return SYSERR;
 }
 
+syscall getmem(int descrp, ulong nbytes)
+{
+    SYSCALL(GETMEM);  //where do we get these constants? (?)
+}
+
 /**
  * syscall wrapper for freemem().
  * @param args expands to: int descrp, void *memptr, ulong nbytes 
@@ -167,17 +176,64 @@ syscall sc_getmem(int *args)
 syscall sc_freemem(int *args)
 {
     int descrp = SCARG(int, args);
-    void *memptr = SCARG(void *, args);
+    void *memptr = SCARG(void *, args); //Is this how you unpack a void pointer? (?)
     ulong nbytes = SCARG(ulong, nbytes);
 
     if (0 == descrp)
         return freemem(memptr, nbytes);
     return SYSERR;
-
 }
 
-syscall sc_ptcreate(int *);
-syscall sc_ptjoin(int *);
+syscall freemem(int descrp, void *memptr, ulongnbytes)
+{
+    SYSCALL(FREEMEM);
+}
+
+/**
+ * syscall wrapper for ptcreate().
+ * @param args expands to: int descrp, pthread_t *thread, const pthread_attr_t *attr,
+ *  void *(*start_routine) (void *), void *arg 
+ **/
+syscall sc_ptcreate(int *args)
+{
+    int descrp = SCARG(int, args);
+    pthread_t *thread = SCARG(pthread_t, args); // Is this how you unpack pointer to pthread_t? (?)
+    const pthread_attr_t *attr = SCARG(const pthread_attr_t, args);
+    void *(*start_routine) (void *) = SCARG(//?, args);  I dont even know how to unpack this? (?)
+    void *arg = SCARG(arg, args);
+
+    if (0 == descrp)
+        return pthread_create(thread, attr, start_routine, arg); //I think I passed this correctly? (?)
+    return SYSERR;
+}
+
+syscall ptcreate(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg) 
+{
+    SYSCALL(PTCREATE);
+}
+
+/**
+ * syscall wrapper for ptjoin().
+ * @param args expands to: int descrp, pthread_t thread, void **retval
+ *
+ **/
+syscall sc_ptjoin(int *args)
+{
+    int descrp = SCARG(int, args);
+    pthread_t thread = SCARG(pthread_t, args);
+    void **retval = SCARG(void, args); // not sure how ot unpack void poitner being derefernced? (?)
+
+    if (0 == descrp)
+        return pthread_join(thread, retval); //I think I passed this correctly? (?)
+    return SYSERR;
+}
+
+syscall ptjoin(pthread_t thread, void **retval)  
+{
+    SYSCALL(PTJOIN);
+}
+
+
 syscall sc_ptlock(int *);
 syscall sc_ptunlock(int *);
 syscall sc_pttrylock(int *);
