@@ -24,6 +24,7 @@
 #define PRCURR      1       /**< process is currently running            */
 #define PRSUSP      2       /**< process is suspended                    */
 #define PRREADY     3       /**< process is on ready queue               */
+#define PRJOIN      4       /**< process is on join  queue               */
 
 /* miscellaneous process definitions                                     */
 
@@ -55,6 +56,7 @@ typedef struct pentry
     int stklen;                 /**< stack length                            */
     uint tickets;               /**< number of tickets                       */
     char name[PNMLEN];          /**< process name                            */
+    pthread_t joinqueue[NPROC];      /**< joinqueue                               */
 } pcb;
 
 extern struct pentry proctab[];

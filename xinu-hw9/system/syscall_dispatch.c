@@ -209,9 +209,23 @@ syscall sc_ptcreate(int *args)
 syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in here? With out current setup (?)
 {
     pthread_t thread = SCARG(pthread_t, args);
-    void **retval = SCARG(void, args); 
+    void **retval = SCARG(void, args);
 
-    return //?; 
+    //1. intialize new joinqueue in PCB struct and PRJOIN state in proc.h -> DONE
+    
+    //2. calling process->PRJOIN -> DONE
+    (&proctab[currpid[getcpuid()]])->state = PRJOIN; 
+    
+    //3. Enqeue calling process in process B's joinqueue -> DONE
+    enqueue(&proctab[currpid[getcpuid()]], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)
+    //4. yield the processor -> DONE
+    user_yield();
+
+    //5. Modify kill() to to dequeue the current process and make ready any processes waiting in the dying processes's joinqueue
+
+    //NOTE: Be sure to allocate enough new entries in the global queue table, and to initialize all of these new queues in sysinit(). 
+
+    return OK; 
 }
 
 //UPDATED (?)

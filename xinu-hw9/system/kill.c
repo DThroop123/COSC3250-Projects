@@ -24,9 +24,16 @@ syscall kill(int pid)
 
     ppcb = &proctab[pid]; //pointer to the process control block
 
-    // --numproc;
-    // I think this is what we want
     atomic_decrement(&numproc);
+   
+    //readying processes in joinqueue
+    //dequeueing processes
+
+    for(int i = 0; i < NPROC; i++)
+    {
+      &proctab[(ppcb->joinqueue[i])]->state = PRREADY;
+      dequeue(ppcd->joinqueue[i]);    
+    }
 
     switch (ppcb->state)
     {
