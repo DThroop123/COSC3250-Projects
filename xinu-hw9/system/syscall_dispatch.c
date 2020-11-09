@@ -149,91 +149,114 @@ syscall user_putc(int descrp, char character)
 
 //we dont want to make getmem and freemem have user sycalls correct? (?)
 
-
+//NOT UPDATED
 /**
  *  * syscall wrapper for getmem().
  *   * @param args expands to: int descrp, ulong nbytes 
  *    */
 syscall sc_getmem(int *args)
 {
-    int descrp = SCARG(int, args);
-    ulong nbytes = SCARG(ulong, args);
+    ulong nbytes = SCARG(ulong, args);  //do we need to move everything that current is in getmem() to the system call version?
 
-    if (0 == descrp)
-        return getmem(nbytes);
-    return SYSERR;
+    return getmem(nbytes);
 }
 
-syscall getmem(int descrp, ulong nbytes)
+syscall getmem(ulong nbytes)
 {
     SYSCALL(GETMEM);  //where do we get these constants? (?)
 }
 
+//NOT UPDATE
 /**
  * syscall wrapper for freemem().
  * @param args expands to: int descrp, void *memptr, ulong nbytes 
  **/ 
 syscall sc_freemem(int *args)
 {
-    int descrp = SCARG(int, args);
-    void *memptr = SCARG(void *, args); //Is this how you unpack a void pointer? (?)
+    void *memptr = SCARG(void *, args);
     ulong nbytes = SCARG(ulong, nbytes);
 
-    if (0 == descrp)
-        return freemem(memptr, nbytes);
-    return SYSERR;
+    return freemem(memptr, nbytes);
 }
 
-syscall freemem(int descrp, void *memptr, ulongnbytes)
+syscall freemem(void *memptr, ulongnbytes)
 {
     SYSCALL(FREEMEM);
 }
 
+//UPDATED
 /**
  * syscall wrapper for ptcreate().
- * @param args expands to: int descrp, pthread_t *thread, const pthread_attr_t *attr,
+ * @param args expands to: pthread_t *thread, const pthread_attr_t *attr,
  *  void *(*start_routine) (void *), void *arg 
  **/
 syscall sc_ptcreate(int *args)
 {
-    int descrp = SCARG(int, args);
-    pthread_t *thread = SCARG(pthread_t, args); // Is this how you unpack pointer to pthread_t? (?)
+    pthread_t *thread = SCARG(pthread_t *, args);
     const pthread_attr_t *attr = SCARG(const pthread_attr_t, args);
-    void *(*start_routine) (void *) = SCARG(//?, args);  I dont even know how to unpack this? (?)
+    void *(*start_routine) (void *) = SCARG(void *, args);  //possible source of error
     void *arg = SCARG(arg, args);
 
-    if (0 == descrp)
-        return pthread_create(thread, attr, start_routine, arg); //I think I passed this correctly? (?)
-    return SYSERR;
+    return create(thread, attr, start_routine, arg); //possible source of error
 }
 
-syscall ptcreate(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg) 
-{
-    SYSCALL(PTCREATE);
-}
 
+//UPDATED (?)
 /**
  * syscall wrapper for ptjoin().
- * @param args expands to: int descrp, pthread_t thread, void **retval
- *
+ * @param args expands to: pthread_t thread, void **retval
  **/
-syscall sc_ptjoin(int *args)
+syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in here? With out current setup (?)
 {
-    int descrp = SCARG(int, args);
     pthread_t thread = SCARG(pthread_t, args);
-    void **retval = SCARG(void, args); // not sure how ot unpack void poitner being derefernced? (?)
+    void **retval = SCARG(void, args); 
 
-    if (0 == descrp)
-        return pthread_join(thread, retval); //I think I passed this correctly? (?)
-    return SYSERR;
+    return //?; 
 }
 
-syscall ptjoin(pthread_t thread, void **retval)  
+//UPDATED (?)
+/**
+ * syscall wrapper for ptlock().
+ * @param args expands to: pthread_mutex_t *mutex
+ **/
+syscall sc_ptlock(int *args)
 {
-    SYSCALL(PTJOIN);
+	pthread_mutex_t *mutex = SCARG(pthread_mutex_t *, args);       
+
+	return lock_acquire(&mutex); //do we return this call? (?)
 }
 
+//UPDATED (?)
+/**
+ * syscall wrapper for ptunlock().
+ * @param args expands to: pthread_mutex_t *mutex
+ **/
+syscall sc_ptunlock(int *args)
+{
+ 	pthread_mutex_t *mutex = SCARG(pthread_mutex_t *, args);
 
-syscall sc_ptlock(int *);
-syscall sc_ptunlock(int *);
-syscall sc_pttrylock(int *);
+        return lock_release(&mutex); //do we return this call? (?)
+}
+
+//UPDATED
+//NOTE: returns 0 on sucess and 1 on failure
+/**
+ * syscall wrapper for pttrylock().
+ * @param args expands to: pthread_mutex_t *mutex
+ **/
+syscall sc_pttrylock(int *args)
+{
+        pthread_mutex_t *mutex = SCARG(pthread_mutex_t *, args);
+
+	irqmask im;
+        im = disable();
+        if(FALSE == _atomic_compareAndSwapWeak(&mutex,
+                                                 LOCK_UNLOCKED,
+                                                 LOCK_LOCKED | (im & ARM_I_BIT)))
+        {
+                restore(im);
+                return 1;                           //return 1 if failed
+        }
+
+        return 0; //return 0 if succesful
+}
