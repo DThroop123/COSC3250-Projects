@@ -17,6 +17,32 @@
 	return status;
 
 
+syscall pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine) (void *), void *arg)
+{
+        SYSCALL(PTCREATE);
+}
+
+syscall pthread_join(pthread_t thread, void **retval)
+{
+        SYSCALL(PTJOIN);
+}
+
+syscall pthread_mutex_lock(pthread_mutex_t *mutex)
+{
+        SYSCALL(PTLOCK);
+}
+
+syscall pthread_mutex_trylock(pthread_mutex_t *mutex)
+{
+        SYSCALL(PTTRYLOCK);
+}
+
+syscall pthread_mutex_unlock(pthread_mutex_t *mutex)
+{
+        SYSCALL(PTUNLOCK);
+}
+
+
 /* syscall wrapper prototypes */
 syscall sc_none(int *);
 syscall sc_yield(int *);
@@ -55,7 +81,7 @@ const struct syscall_info syscall_table[] = {
     { 2, (void *)sc_ptjoin },   /* SYSCALL_PTJOIN    = 20 */
     { 1, (void *)sc_ptlock },   /* SYSCALL_PTLOCK    = 21 */
     { 1, (void *)sc_ptunlock }, /* SYSCALL_PTUNLOCK  = 22 */
-    { 1, (void *)sc_ptrylock }, /* SYSCALL_PTTRYLOCK = 23 */
+    { 1, (void *)sc_pttrylock }, /* SYSCALL_PTTRYLOCK = 23 */
 };
 
 int nsyscall = sizeof(syscall_table) / sizeof(struct syscall_info);
@@ -158,10 +184,10 @@ syscall sc_getmem(int *args)
 {
     ulong nbytes = SCARG(ulong, args);  //do we need to move everything that current is in getmem() to the system call version?
 
-    return getmem_real(nbytes);
+    return (syscall)getmem_real(nbytes);
 }
 
-syscall getmem(ulong nbytes)
+void * getmem(ulong nbytes)
 {
     SYSCALL(GETMEM);  //where do we get these constants? (?)
 }
@@ -173,13 +199,13 @@ syscall getmem(ulong nbytes)
  **/ 
 syscall sc_freemem(int *args)
 {
-    void *memptr = SCARG(void *, args);
-    ulong nbytes = SCARG(ulong, nbytes);
+    void *memptr = SCARG(ulong, args);
+    ulong nbytes = SCARG(ulong, args);
 
     return freemem_real(memptr, nbytes);
 }
 
-syscall freemem(void *memptr, ulongnbytes)
+syscall freemem(void *memptr, ulong nbytes)
 {
     SYSCALL(FREEMEM);
 }
@@ -194,10 +220,12 @@ syscall sc_ptcreate(int *args)
 {
     pthread_t *thread = SCARG(pthread_t *, args);
     const pthread_attr_t *attr = SCARG(const pthread_attr_t, args);
-    void *(*start_routine) (void *) = SCARG(void *, args);  //possible source of error
-    void *arg = SCARG(arg, args);
+    void *(*start_routine) (void *) = SCARG(ulong, args);  //possible source of error
+    void *arg = SCARG(ulong, args);
 
-    return create(thread, attr, start_routine, arg); //possible source of error
+    return create(start_routine, INITSTK, INITPRIO, "NAME", 1, arg);
+	//create takes, &function, size, # tickets, Name, # args, arguments (need to check this)
+    //return create(thread, attr, start_routine, arg); //possible source of error
 }
 
 
@@ -209,7 +237,7 @@ syscall sc_ptcreate(int *args)
 syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in here? With out current setup (?)
 {
     pthread_t thread = SCARG(pthread_t, args);
-    void **retval = SCARG(void, args);
+    void **retval = SCARG(ulong, args);
 
     //1. intialize new joinqueue in PCB struct and PRJOIN state in proc.h -> DONE
     
@@ -217,10 +245,10 @@ syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in
     (&proctab[currpid[getcpuid()]])->state = PRJOIN; 
     
     //3. Enqeue calling process in process B's joinqueue -> DONE
-    enqueue(&proctab[currpid[getcpuid()]], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)i
+    enqueue(currpid[getcpuid()], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)
 
     //4. yield the processor -> DONE
-    user_yield();
+    resched();
 
     //5. Modify kill() to to dequeue the current process and make ready any processes waiting in the dying processes's joinqueue
 

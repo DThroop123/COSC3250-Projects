@@ -29,10 +29,9 @@ syscall kill(int pid)
     //readying processes in joinqueue
     //dequeueing processes
 
-    for(int i = 0; i < NPROC; i++)
+    while(!isempty(ppcb->joinqueue))
     {
-      &proctab[(ppcb->joinqueue[i])]->state = PRREADY;
-      dequeue(ppcd->joinqueue[i]);    
+      ready(dequeue(ppcb->joinqueue), RESCHED_NO);
     }
 
     switch (ppcb->state)

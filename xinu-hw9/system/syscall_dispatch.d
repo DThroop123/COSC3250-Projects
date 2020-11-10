@@ -7,7 +7,8 @@
  ../include/stdio.h ../include/platform.h ../include/bcm2837.h \
  ../include/pl011.h ../include/version.h ../include/syscall.h \
  ../include/clock.h ../include/random.h ../include/atomic.h \
- ../include/cas_lock.h ../include/core.h ../include/mmu.h
+ ../include/cas_lock.h ../include/core.h ../include/mmu.h \
+ ../include/pthread.h
 
 ../include/xinu.h:
 
@@ -62,3 +63,5 @@
 ../include/core.h:
 
 ../include/mmu.h:
+
+../include/pthread.h:

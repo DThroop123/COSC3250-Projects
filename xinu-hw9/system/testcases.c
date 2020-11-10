@@ -11,6 +11,84 @@
 extern void main(int, char *);
 struct memblock *temp, *temp2, *temp3;
 
+//Pound defines from the pThread demo code provided to us
+#define MAX 10000
+#define THRD_COUNT 4
+
+/* This struct lets us pass three items to each thread */
+typedef struct
+{
+  int *array;
+  int length;
+  long int *answer;
+  pthread_mutex_t *lock;
+} myarg_t;
+
+
+/* Function for each thread to sum up its part of the array from the demo code provided */
+void *mythread(void *arg)
+{
+  /* Cast the generic args to be our myarg_t struct */
+  myarg_t *args = (myarg_t *)arg;
+  
+  int i = 0;
+
+  //printf("Adding %d to %d\n", args->array[0], args->array[args->length - 1]);
+  for (i = 0; i < args->length; i++)
+  {
+  	pthread_mutex_lock(args->lock);
+        *(args->answer) += args->array[i];
+        pthread_mutex_unlock(args->lock);
+  }
+  return NULL;
+}
+
+int demoTest()
+{
+  int *array = NULL;               /* Array of numbers to add up        */
+  long int answer = 0;             /* Answers from each thread          */
+  pthread_t threads[THRD_COUNT];   /* PThread objects                   */
+  myarg_t args[THRD_COUNT];        /* Argument struct, one per thread   */
+  int i = 0, rc = 0;
+  pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+  array = (int *)malloc(MAX * sizeof(int));
+  if (NULL == array) return -1;
+  
+  kprintf("Made it passed the malloc call\r\n");
+
+  /* Initialize data from 1 to MAX  */
+  for (i = 0; i < MAX; i++) { array[i] = i + 1; }
+
+  /* Initialize Per-thread argument structs */
+  for (i = 0; i < THRD_COUNT; i++)
+    {
+      /* Each thread gets its own portion of the array */
+      args[i].array = array + i * (MAX / THRD_COUNT);
+      args[i].length = MAX / THRD_COUNT;
+  
+      /* Each thread gets its own answer spot */
+      args[i].answer = &answer;
+      args[i].lock = &lock;
+    }
+
+  /* Create all of the worker threads */
+  for (i = 0; i < THRD_COUNT; i++)
+    {
+      rc = pthread_create(threads + i, NULL, mythread, args + i);
+    }
+
+  /* Use join() to wait for each thread to complete its work */
+  for (i = 0; i < THRD_COUNT; i++)
+    {
+      pthread_join(threads[i], NULL);
+    }
+
+  kprintf("Final answer is %d\n", answer);
+  
+  return 0;
+}
+
 int testmain(int argc, char **argv)
 {
     int i = 0;
@@ -46,8 +124,8 @@ void printFreeList()
 
    while(curr != NULL)
    {
-	kprintf("%d\r\n", (curr->length));	//Length
-	kprintf("0x%08X\r\n", (curr));	//current address
+	kprintf("Space remain on Freelist: %d\r\n", (curr->length));	//Length
+	kprintf("Current address where Freelist begins: 0x%08X\r\n", (curr));	//current address
 
 	//reset vars
 	curr = curr->next;
@@ -106,7 +184,7 @@ void testcases(void)
     kprintf("5) Testing the getmem function with 0x1000, 0x2000 and 0x3000 bytes of requested allocated space\r\n");
     kprintf("6) Testing freemem on a getmem space of 0x100 bytes\r\n");
     kprintf("7) Testing free() and malloc() cases of test 3 in random roder\r\n");
-    kprintf("8) Testing free() and malloc() cases of test 3 in random roder\r\n");
+    kprintf("8) Testing the pthread operation of join, create, lock and unlock using the demo code provided to us\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -209,6 +287,7 @@ void testcases(void)
 	//Testing freemem on getmem of 0x1000 bytes
         kprintf("Free list before getmeming 256 bytes:\r\n");
         printFreeList();
+	kprintf("Freelist after getmem of 0x100 bytes:\r\n");
         temp = getmem(0x100);
         printFreeList();
         freemem(temp, 0x100);
@@ -245,9 +324,9 @@ void testcases(void)
 
 	break;
 
-   // case '8':
-
-        break;
+    case '8': //Code taken from the demo provided to us
+        demoTest();
+	break;
     }
 
     kprintf("\r\n===TEST END===\r\n");

@@ -17,7 +17,7 @@
  *      The returned pointer is guaranteed to be 8-byte aligned.  Free the block
  *      with memfree() when done with it.
  */
-void *getmem_real(ulong nbytes)
+syscall *getmem_real(ulong nbytes)
 {
     memblk *prev, *curr, *leftover;
 

@@ -27,8 +27,9 @@
 #define _QUEUE_H_
 
 #ifndef NQENT
-#define NQENT  (2 * NPROC)   /**< one for each process                        */ \
-          + 2           /**< plus two for each list (ready list)         */
+#define NQENT  NPROC   /**< one for each process                        */ \
+          + 2            /**< plus two for each list (ready list)         */\
+	  + (2 * NPROC)
 #endif
 
 typedef unsigned long qid_typ;
