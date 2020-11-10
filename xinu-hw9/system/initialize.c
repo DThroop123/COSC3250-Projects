@@ -152,6 +152,7 @@ static int sysinit(void)
     for (i = 0; i < NPROC; i++)
     {
         proctab[i].state = PRFREE;
+        proctab[i].joinqueue = newqueue();
     }
 
     for (i = 0; i < NCORES; i++)
@@ -163,7 +164,7 @@ static int sysinit(void)
 
     /* Initialize ready list */
     readylist = newqueue();
-
+   
     /* Initialize free memory list */
     freelist.lock = LOCK_UNLOCKED;
     freelist.bound = freelist.length =

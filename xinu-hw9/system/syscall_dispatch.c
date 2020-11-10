@@ -158,7 +158,7 @@ syscall sc_getmem(int *args)
 {
     ulong nbytes = SCARG(ulong, args);  //do we need to move everything that current is in getmem() to the system call version?
 
-    return getmem(nbytes);
+    return getmem_real(nbytes);
 }
 
 syscall getmem(ulong nbytes)
@@ -176,7 +176,7 @@ syscall sc_freemem(int *args)
     void *memptr = SCARG(void *, args);
     ulong nbytes = SCARG(ulong, nbytes);
 
-    return freemem(memptr, nbytes);
+    return freemem_real(memptr, nbytes);
 }
 
 syscall freemem(void *memptr, ulongnbytes)
@@ -217,7 +217,8 @@ syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in
     (&proctab[currpid[getcpuid()]])->state = PRJOIN; 
     
     //3. Enqeue calling process in process B's joinqueue -> DONE
-    enqueue(&proctab[currpid[getcpuid()]], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)
+    enqueue(&proctab[currpid[getcpuid()]], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)i
+
     //4. yield the processor -> DONE
     user_yield();
 

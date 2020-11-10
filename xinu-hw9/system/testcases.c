@@ -106,6 +106,7 @@ void testcases(void)
     kprintf("5) Testing the getmem function with 0x1000, 0x2000 and 0x3000 bytes of requested allocated space\r\n");
     kprintf("6) Testing freemem on a getmem space of 0x100 bytes\r\n");
     kprintf("7) Testing free() and malloc() cases of test 3 in random roder\r\n");
+    kprintf("8) Testing free() and malloc() cases of test 3 in random roder\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -244,7 +245,8 @@ void testcases(void)
 
 	break;
 
-    default:
+   // case '8':
+
         break;
     }
 

@@ -19,7 +19,7 @@
  *      ::OK on success; ::SYSERR on failure.  This function can only fail
  *      because of memory corruption or specifying an invalid memory block.
  */
-syscall freemem(void *memptr, ulong nbytes)
+syscall freemem_real(void *memptr, ulong nbytes)
 {
     //we added a curr pointer to traverse
     register struct memblock *block, *next, *prev;
