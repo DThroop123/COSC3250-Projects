@@ -15,7 +15,8 @@ struct memblock *temp, *temp2, *temp3;
 #define MAX 10000
 #define THRD_COUNT 4
 
-/* This struct lets us pass three items to each thread */
+/**
+//This struct lets us pass three items to each thread
 typedef struct
 {
   int *array;
@@ -23,7 +24,21 @@ typedef struct
   long int *answer;
   pthread_mutex_t *lock;
 } myarg_t;
+*/
 
+/* pThread struct to pass into testbigarg function */
+typedef struct
+{
+  ulong parm1;
+  ulong parm2;
+  ulong parm3;
+  ulong parm4;
+  ulong parm5;
+  ulong parm6;
+  ulong parm7;
+  ulong parm8;
+  pthread_mutex_t *lock;
+} myarg_t;
 
 /* Function for each thread to sum up its part of the array from the demo code provided */
 void *mythread(void *arg)
@@ -33,7 +48,7 @@ void *mythread(void *arg)
   
   int i = 0;
 
-  //printf("Adding %d to %d\n", args->array[0], args->array[args->length - 1]);
+  //kprintf("Adding %d to %d\n", args->array[0], args->array[args->length - 1]);
   for (i = 0; i < args->length; i++)
   {
   	pthread_mutex_lock(args->lock);
@@ -184,7 +199,9 @@ void testcases(void)
     kprintf("5) Testing the getmem function with 0x1000, 0x2000 and 0x3000 bytes of requested allocated space\r\n");
     kprintf("6) Testing freemem on a getmem space of 0x100 bytes\r\n");
     kprintf("7) Testing free() and malloc() cases of test 3 in random roder\r\n");
-    kprintf("8) Testing the pthread operation of join, create, lock and unlock using the demo code provided to us\r\n");
+    kprintf("8) Testing pthread create\r\n");
+    kprintf("9) Testing pthread for two threads along with pJoin\r\n");
+    //kprintf("10) Testing the pthread operation of join, create, lock and unlock using the demo code provided to us\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -324,7 +341,35 @@ void testcases(void)
 
 	break;
 
-    case '8': //Code taken from the demo provided to us
+    case '8': //Testing pThread create using the bigarg function	
+	;
+	int r = 0;
+	pthread_t threads;
+	myarg_t  args;	//argument struct for big args function
+	pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+	
+	// Initalize the stuct before passing into pthread_create call
+	args.parm1 = 0x11111111; 
+	args.parm2 = 0x22222222;
+	args.parm3 = 0x33333333;
+	args.parm4 = 0x44444444;
+	args.parm5 = 0x55555555;
+	args.parm6 = 0x66666666;
+	args.parm7 = 0x77777777;
+	args.parm8 = 0x88888888;
+	args.lock = &lock;
+
+	//create the thread using pthread_create call
+	r = pthread_create(threads, NULL, &testbigargs, args);
+
+	kprintf("Finished testcase 8\r\n");
+
+	break;
+
+    case '9': //Testing pThread create for two threads and pJoin
+	break;
+
+    case '10': //Code taken from the demo provided to us
         demoTest();
 	break;
     }
