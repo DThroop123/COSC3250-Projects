@@ -53,9 +53,9 @@ void *mythread(void *arg)
   //kprintf("Adding %d to %d\n", args->array[0], args->array[args->length - 1]);
   for (i = 0; i < args->length; i++)
   {
-  	//pthread_mutex_lock(args->lock);
+  	pthread_mutex_lock(args->lock);
         *(args->answer) += args->array[i];
-        //pthread_mutex_unlock(args->lock);
+        pthread_mutex_unlock(args->lock);
         kprintf("Adding: %d\r\n", args->array[i]);
   }
   return NULL;
@@ -73,7 +73,7 @@ int demoTest()
   pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
   array = (int *)malloc(MAX * sizeof(int));
-  if (NULL == array) return -1;
+  //if (NULL == array) return -1;
   
   kprintf("Made it passed the malloc call\r\n");
 
@@ -205,8 +205,7 @@ void testcases(void)
     kprintf("6) Testing freemem on a getmem space of 0x100 bytes\r\n");
     kprintf("7) Testing free() and malloc() cases of test 3 in random roder\r\n");
     kprintf("8) Testing pthread create\r\n");
-    kprintf("9) Testing pthread for two threads along with pJoin\r\n");
-    //kprintf("10) Testing the pthread operation of join, create, lock and unlock using the demo code provided to us\r\n");
+    kprintf("t) Testing the pthread operation of join, create, lock and unlock using the demo code provided to us\r\n");
 
     kprintf("===TEST BEGIN===\r\n");
 
@@ -381,9 +380,6 @@ void testcases(void)
 
         kprintf("Answer: %d\r\n", *args.answer);
 
-	break;
-
-    case '9': //Testing pThread create for two threads and pJoin
 	break;
 
     case 't': //Code taken from the demo provided to us

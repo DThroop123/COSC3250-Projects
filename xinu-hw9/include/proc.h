@@ -56,7 +56,7 @@ typedef struct pentry
     int stklen;                 /**< stack length                            */
     uint tickets;               /**< number of tickets                       */
     char name[PNMLEN];          /**< process name                            */
-    ulong joinqueue;      /**< joinqueue                               */
+    ulong joinqueue;            /**< joinqueue                               */
 } pcb;
 
 extern struct pentry proctab[];
