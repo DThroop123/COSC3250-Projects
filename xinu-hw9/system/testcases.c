@@ -15,8 +15,7 @@ struct memblock *temp, *temp2, *temp3;
 #define MAX 10000
 #define THRD_COUNT 4
 
-/**
-//This struct lets us pass three items to each thread
+
 typedef struct
 {
   int *array;
@@ -24,9 +23,10 @@ typedef struct
   long int *answer;
   pthread_mutex_t *lock;
 } myarg_t;
-*/
+
 
 /* pThread struct to pass into testbigarg function */
+/**
 typedef struct
 {
   ulong parm1;
@@ -39,10 +39,12 @@ typedef struct
   ulong parm8;
   pthread_mutex_t *lock;
 } myarg_t;
+**/
 
 /* Function for each thread to sum up its part of the array from the demo code provided */
 void *mythread(void *arg)
 {
+  kprintf("We made it");
   /* Cast the generic args to be our myarg_t struct */
   myarg_t *args = (myarg_t *)arg;
   
@@ -51,15 +53,18 @@ void *mythread(void *arg)
   //kprintf("Adding %d to %d\n", args->array[0], args->array[args->length - 1]);
   for (i = 0; i < args->length; i++)
   {
-  	pthread_mutex_lock(args->lock);
+  	//pthread_mutex_lock(args->lock);
         *(args->answer) += args->array[i];
-        pthread_mutex_unlock(args->lock);
+        //pthread_mutex_unlock(args->lock);
+        kprintf("Adding: %d\r\n", args->array[i]);
   }
   return NULL;
 }
 
 int demoTest()
 {
+
+
   int *array = NULL;               /* Array of numbers to add up        */
   long int answer = 0;             /* Answers from each thread          */
   pthread_t threads[THRD_COUNT];   /* PThread objects                   */
@@ -340,36 +345,48 @@ void testcases(void)
         printFreeList();
 
 	break;
+//testing pthread_create() with sum of 100 array elements
+    case '8': 	
+        ;
+        
+        int *array = NULL;               /* Array of numbers to add up        */
+        long int answer = 0;             /* Answers from each thread          */
+        pthread_t thread;                /* PThread objects                   */
+        myarg_t args;                    /* Argument struct, one per thread   */
+        pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+        int r = 0;
+        int i = 0;
 
-    case '8': //Testing pThread create using the bigarg function	
-	;
-	int r = 0;
-	pthread_t threads;
-	myarg_t  args;	//argument struct for big args function
-	pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-	
-	// Initalize the stuct before passing into pthread_create call
-	args.parm1 = 0x11111111; 
-	args.parm2 = 0x22222222;
-	args.parm3 = 0x33333333;
-	args.parm4 = 0x44444444;
-	args.parm5 = 0x55555555;
-	args.parm6 = 0x66666666;
-	args.parm7 = 0x77777777;
-	args.parm8 = 0x88888888;
-	args.lock = &lock;
+        array = (int *)malloc(100 * sizeof(int));
+
+        kprintf("Made it passed the malloc call\r\n");
+
+        /* Initialize data from 1 to MAX  */
+        for (i = 0; i < 100; i++) { array[i] = i + 1; }
+
+        /* Each thread gets its own portion of the array */
+        args.array = array;
+        args.length = 100;
+
+        /* Each thread gets its own answer spot */
+        args.answer = &answer;
+        args.lock = &lock;
 
 	//create the thread using pthread_create call
-	r = pthread_create(threads, NULL, &testbigargs, args);
+	r = pthread_create(&thread, NULL, mythread, &args);
 
-	kprintf("Finished testcase 8\r\n");
+        //pthread_join(thread, NULL);
+
+	kprintf("Finished testcase 8, r = %d\r\n", r);
+
+        kprintf("Answer: %d\r\n", *args.answer);
 
 	break;
 
     case '9': //Testing pThread create for two threads and pJoin
 	break;
 
-    case '10': //Code taken from the demo provided to us
+    case 't': //Code taken from the demo provided to us
         demoTest();
 	break;
     }

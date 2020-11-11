@@ -246,6 +246,7 @@ syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in
     
     //3. Enqeue calling process in process B's joinqueue -> DONE
     enqueue(currpid[getcpuid()], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)
+    kprintf("We made it past enqueue.\r\n");
 
     //4. yield the processor -> DONE
     resched();

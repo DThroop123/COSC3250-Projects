@@ -14,6 +14,9 @@
  */
 syscall kill(int pid)
 {
+
+    kprintf("we make it to kill\r\n");
+
     pcb *ppcb;                  /* points to process control block for pid */
 
     if (isbadpid(pid) || (0 == pid)
@@ -28,11 +31,13 @@ syscall kill(int pid)
    
     //readying processes in joinqueue
     //dequeueing processes
+    kprintf("we make it to the loop\r\n");
 
     while(!isempty(ppcb->joinqueue))
     {
       ready(dequeue(ppcb->joinqueue), RESCHED_NO);
     }
+    kprintf("we are not stuck in the loop\r\n");
 
     switch (ppcb->state)
     {
