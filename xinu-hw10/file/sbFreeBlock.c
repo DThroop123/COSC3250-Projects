@@ -23,5 +23,26 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     //  free blocks.  Use the superblock's locks to guarantee
     //  mutually exclusive access to the free list, and write
     //  the changed free list segment(s) back to disk.
+
+    //intialize head
+    struct freeblock *head;
+    head = psuper->sbfree_lst;
+
+    //traverse the collector nodes
+    while(head->fr_next != NULL)
+    {
+       head = head->fr_next;
+    }
+
+    // dealing withn full edge case
+    // if(head->fr_count > 60)
+    // {
+    //     return SYSERR
+    // }
+
+    head->fr_count++;
+
+    head->fr_free[head->fr_count] = block;
+
     return SYSERR;
 }
