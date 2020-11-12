@@ -134,8 +134,8 @@ syscall resched(void)
 
     //release lock
     lock_release(&lock);
-//    kprintf("CORE: %d\r\n", getcpuid());
-//    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
+   // kprintf("CORE: %d\r\n", getcpuid());
+    kprintf("[%d, %d]\r\n", oldproc - proctab, newproc - proctab); 
     ctxsw(&oldproc->stkptr, &newproc->stkptr);
 
     /* The OLD process returns here when resumed. */

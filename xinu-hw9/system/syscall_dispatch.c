@@ -223,7 +223,9 @@ syscall sc_ptcreate(int *args)
     void *(*start_routine) (void *) = SCARG(ulong, args);  //possible source of error
     void *arg = SCARG(ulong, args);
 
-    *thread = create(start_routine, INITSTK, INITPRIO, "NAME", 1, arg);
+   
+ *thread = create(start_routine, INITSTK, INITPRIO, "NAME", 1, arg);
+ ready(*thread, RESCHED_NO); 
     return OK;
 }
 
@@ -241,14 +243,14 @@ syscall sc_ptjoin(int *args)  //does all the work for the join() method occur in
     //1. intialize new joinqueue in PCB struct and PRJOIN state in proc.h -> DONE
     
     //2. calling process->PRJOIN -> DONE
-    kprintf("current pid: %d\r\n", currpid[getcpuid()]);
+    //kprintf("current pid: %d\r\n", currpid[getcpuid()]);
     (&proctab[currpid[getcpuid()]])->state = PRJOIN; 
     
     //3. Enqeue calling process in process B's joinqueue -> DONE
-    kprintf("proctab[thread]: %d\r\n", proctab[thread]);
-    kprintf("thread: %d\r\n", thread);
+    //kprintf("proctab[thread]: %d\r\n", proctab[thread]);
+    //kprintf("thread: %d\r\n", thread);
     enqueue(currpid[getcpuid()], (&proctab[thread])->joinqueue); // do we want to get teh adress of the joinqueue here? (?)
-    kprintf("We made it past enqueue.\r\n");
+    //kprintf("We made it past enqueue.\r\n");
 
     //4. yield the processor -> DONE
     resched();
