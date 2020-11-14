@@ -25,8 +25,24 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     //  the changed free list segment(s) back to disk.
 
     //intialize head
-    struct freeblock *head;
+    struct freeblock *head, *free2;
     head = psuper->sbfree_lst;
+    struct dentry *phw;
+    int result;
+
+
+    //initialzing disk 
+    if (NULL == psuper)
+    {
+        return SYSERR;
+    }
+    phw = psuper->sb_disk;
+    if (NULL == phw)
+    {
+        return SYSERR;
+    }
+    diskfd = phw - devtab;
+
 
     //locking
     wait(psuper->sb_freelock);
@@ -48,6 +64,25 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     //place block in fr_free at new fr_count
     head->fr_free[head->fr_count] = block;
+
+     free2 = head->fr_next;
+        if (NULL == head->fr_next)
+        {
+            head->fr_next = 0;
+        }
+        else
+        {
+            head->fr_next =
+                (struct freeblock *)head->fr_next->fr_blocknum;
+        }
+        seek(diskfd, head->fr_blocknum);
+        if (SYSERR == write(diskfd, head, sizeof(struct freeblock)))
+        {
+            return SYSERR;
+        }
+       head->fr_next = free2;
+        if (!result)
+            result = SYSERR;
 
     //unlocking
     signal(psuper->sb_freelock);
