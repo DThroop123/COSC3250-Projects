@@ -28,6 +28,9 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     struct freeblock *head;
     head = psuper->sbfree_lst;
 
+    //locking
+    wait(psuper->sb_freelock);
+
     //traverse the collector nodes
     while(head->fr_next != NULL)
     {
@@ -40,9 +43,14 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     //     return SYSERR
     // }
 
+    //increment freeblock count
     head->fr_count++;
 
+    //place block in fr_free at new fr_count
     head->fr_free[head->fr_count] = block;
+
+    //unlocking
+    signal(psuper->sb_freelock);
 
     return SYSERR;
 }
