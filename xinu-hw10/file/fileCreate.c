@@ -26,6 +26,8 @@ devcall fileCreate(char *name)
     }
     if (fd >= DIRENTRIES)
     {
+        //is this where we add the new node? (?)
+        
         signal(supertab->sb_dirlock);
         return SYSERR;
     }

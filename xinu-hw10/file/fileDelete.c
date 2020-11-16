@@ -22,24 +22,24 @@ devcall fileDelete(int fd)
     //  Use the superblock's locks to guarantee mutually exclusive
     //  access to the directory index.
 
-    struct dirblock *head;
+    struct filenode *file;
 
     //locking 
-    wait(psuper->sb_freelock);
+    wait(supertab->sb_freelock);
 
     //traversing sb_dirlst[]
-    
 
-    
+    //accesing the file from the mastery directory index
+    //what index would we use on the directory list? (?)
+    //do we use somehting from fd to indicate our position on the
+    //directory list? 
 
+    file = &(supertab->sb_dirlst->db_fnodes[fd]);
 
-
-    
-
-
+    sbFreeBlock(supertab, file->fn_blocknum);    
 
     //unlocking
-    signal(psuper->sb_freelock);
+    signal(supertab->sb_freelock);
 
 
 

@@ -26,9 +26,10 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     //intialize head
     struct freeblock *head, *free2;
-    head = psuper->sbfree_lst;
+    head = psuper->sb_freelst;
     struct dentry *phw;
     int result;
+    int diskfd;
 
 
     //initialzing disk 
