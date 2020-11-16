@@ -23,9 +23,11 @@ devcall fileDelete(int fd)
     //  access to the directory index.
 
     struct filenode *file;
-
+    kprintf("We make it into fileDelete()\r\n");
     //locking 
     wait(supertab->sb_freelock);
+
+    kprintf("We lock\r\n");
 
     //traversing sb_dirlst[]
 
@@ -34,8 +36,10 @@ devcall fileDelete(int fd)
     //do we use somehting from fd to indicate our position on the
     //directory list? 
 
-    file = &(supertab->sb_dirlst->db_fnodes[fd]);
+    file = &(supertab->sb_dirlst->db_fnodes[fd]);  //there is only one directory list node 
 
+    kprintf("we make it to sbFreeBlock\r\n");
+    
     sbFreeBlock(supertab, file->fn_blocknum);    
 
     //unlocking

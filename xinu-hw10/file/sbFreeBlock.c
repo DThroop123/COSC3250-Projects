@@ -26,13 +26,14 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     //intialize head
     struct freeblock *head, *free2;
-    head = psuper->sb_freelst;
+  
     struct dentry *phw;
     int result;
     int diskfd;
 
+    kprintf("We make is past intiializing in sbFreeBlock()\r\n");
 
-    //initialzing disk 
+    //initialzing diskfd (not the disk) 
     if (NULL == psuper)
     {
         return SYSERR;
@@ -44,21 +45,29 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     }
     diskfd = phw - devtab;
 
-
+    head = psuper->sb_freelst;
     //locking
     wait(psuper->sb_freelock);
+
+    kprintf("We aren't stuck on locking\r\n");
 
     //traverse the collector nodes
     while(head->fr_next != NULL)
     {
        head = head->fr_next;
+       kprintf("block num: %d\r\n", head->fr_blocknum);
     }
+
+    kprintf("We made it out of traversing the free list!\r\n");
+    
 
     // dealing withn full edge case
     // if(head->fr_count > 60)
     // {
     //     return SYSERR
     // }
+
+    //what happens when full?
 
     //increment freeblock count
     head->fr_count++;

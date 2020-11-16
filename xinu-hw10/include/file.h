@@ -64,7 +64,7 @@ struct superblock
     int sb_blocktotal;          /* Total blocks in file system */
     struct freeblock *sb_freelst;
     semaphore sb_freelock;
-    struct dirblock *sb_dirlst;
+    struct dirblock *sb_dirlst;  //this is the mastery directory index 
     semaphore sb_dirlock;
     struct dentry *sb_disk;
 };
