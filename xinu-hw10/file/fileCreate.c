@@ -26,8 +26,11 @@ devcall fileCreate(char *name)
     }
     if (fd >= DIRENTRIES)
     {
-        //is this where we add the new node? (?)
-        
+	struct dirblock *newDir = malloc(sizeof(struct dirblock));
+
+	supertab->sb_dirlst->dr_next = newDir;
+        //do we need to return anything here?      
+ 
         signal(supertab->sb_dirlock);
         return SYSERR;
     }

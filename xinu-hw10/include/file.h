@@ -39,8 +39,7 @@ struct dirblock
 {
     int db_blocknum;
     struct filenode db_fnodes[DIRENTRIES];
-    //PART II
-    //struct dirblock *db_next;
+    struct dirblock *db_next;
 };
 
 #define isbadfd(n) (((n) < 0) || ((n) >= DIRENTRIES))

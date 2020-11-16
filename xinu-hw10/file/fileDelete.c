@@ -40,12 +40,10 @@ devcall fileDelete(int fd)
 
     kprintf("we make it to sbFreeBlock\r\n");
     
-    sbFreeBlock(supertab, file->fn_blocknum);    
-
     //unlocking
     signal(supertab->sb_freelock);
 
-
+    sbFreeBlock(supertab, file->fn_blocknum);
 
 
 

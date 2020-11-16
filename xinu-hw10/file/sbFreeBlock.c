@@ -28,7 +28,7 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     struct freeblock *head, *free2;
   
     struct dentry *phw;
-    int result;
+    int result = 1;
     int diskfd;
 
     kprintf("We make is past intiializing in sbFreeBlock()\r\n");
@@ -74,6 +74,7 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     //place block in fr_free at new fr_count
     head->fr_free[head->fr_count] = block;
+    kprintf("Inserting: %d at [%d]\r\n", block, head->fr_count);
 
      free2 = head->fr_next;
         if (NULL == head->fr_next)
