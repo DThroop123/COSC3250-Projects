@@ -45,9 +45,11 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     }
     diskfd = phw - devtab;
 
-    head = psuper->sb_freelst;
+
     //locking
     wait(psuper->sb_freelock);
+
+    head = psuper->sb_freelst;    
 
     kprintf("We aren't stuck on locking\r\n");
 
@@ -69,11 +71,12 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     //what happens when full?
 
-    //increment freeblock count
-    head->fr_count++;
 
     //place block in fr_free at new fr_count
     head->fr_free[head->fr_count] = block;
+  
+    head->fr_count++;    
+
     kprintf("Inserting: %d at [%d]\r\n", block, head->fr_count);
 
      free2 = head->fr_next;

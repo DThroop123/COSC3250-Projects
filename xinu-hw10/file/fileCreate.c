@@ -26,13 +26,19 @@ devcall fileCreate(char *name)
     }
     if (fd >= DIRENTRIES)
     {
+        struct dirblock *head;
 	struct dirblock *newDir = malloc(sizeof(struct dirblock));
+        head = supertab->sb_dirlst;
 
-	supertab->sb_dirlst->dr_next = newDir;
-        //do we need to return anything here?      
+        while(head->db_next != NULL)
+        {
+            head = head->db_next;
+        }
+
+	head->db_next = newDir;
+        //how do we make sure the newDir is used?
  
         signal(supertab->sb_dirlock);
-        return SYSERR;
     }
 
     filetab[fd].fn_length = 0;
