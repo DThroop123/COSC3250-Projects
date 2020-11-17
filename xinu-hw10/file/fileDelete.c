@@ -22,13 +22,13 @@ devcall fileDelete(int fd)
     //  Use the superblock's locks to guarantee mutually exclusive
     //  access to the directory index.
 
-    struct filenode *filhe;
-    kprintf("We make it into fileDelete()\r\n");
+    struct filenode *file;
+    //kprintf("We make it into fileDelete()\r\n");
 
     //locking 
     wait(supertab->sb_dirlock);
 
-    kprintf("We lock\r\n");
+    //kprintf("We lock\r\n");
 
     //traversing sb_dirlst[]
 
@@ -45,7 +45,7 @@ devcall fileDelete(int fd)
     file->fn_name[0] = '\0';
     free(file->fn_data);
 
-    kprintf("we make it to sbFreeBlock\r\n");
+    //kprintf("we make it to sbFreeBlock\r\n");
    
     sbFreeBlock(supertab, file->fn_blocknum);
 

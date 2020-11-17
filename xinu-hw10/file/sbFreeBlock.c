@@ -31,7 +31,7 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     int result = 1;
     int diskfd;
 
-    kprintf("We make is past intiializing in sbFreeBlock()\r\n");
+    //kprintf("We make is past intiializing in sbFreeBlock()\r\n");
 
     //initialzing diskfd (not the disk) 
     if (NULL == psuper)
@@ -51,16 +51,16 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
 
     head = psuper->sb_freelst;    
 
-    kprintf("We aren't stuck on locking\r\n");
+    //kprintf("We aren't stuck on locking\r\n");
 
     //traverse the collector nodes
     while(head->fr_next != NULL)
     {
        head = head->fr_next;
-       kprintf("block num: %d\r\n", head->fr_blocknum);
+       //kprintf("block num: %d\r\n", head->fr_blocknum);
     }
 
-    kprintf("We made it out of traversing the free list!\r\n");
+    //kprintf("We made it out of traversing the free list!\r\n");
     
 
     // dealing withn full edge case
@@ -77,7 +77,7 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
   
     head->fr_count++;    
 
-    kprintf("Inserting: %d at [%d]\r\n", block, head->fr_count);
+    //kprintf("Inserting: %d at [%d]\r\n", block, head->fr_count);
 
      free2 = head->fr_next;
         if (NULL == head->fr_next)
