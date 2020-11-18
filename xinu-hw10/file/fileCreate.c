@@ -26,6 +26,7 @@ devcall fileCreate(char *name)
     }
     if (fd >= DIRENTRIES)
     {
+        //our problem is in extending the directory
         struct dirblock *head;
 	    struct dirblock *newDir = malloc(sizeof(struct dirblock));
         head = supertab->sb_dirlst;

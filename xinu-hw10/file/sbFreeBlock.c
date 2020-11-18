@@ -2,8 +2,8 @@
 /* Copyright (C) 2008, Marquette University.  All rights reserved. */
 /*                                                                 */
 /* Modified by                                                     */
-/*                                                                 */
-/* and                                                             */
+/* Daniel Throop daniel.throop@marquette.edu                       */
+/* and Brea Brennan brea.brennan@marquette.edu                     */
 /*                                                                 */
 /*                                                                 */
 
@@ -63,19 +63,26 @@ devcall sbFreeBlock(struct superblock *psuper, int block)
     //kprintf("We made it out of traversing the free list!\r\n");
     
 
-    // dealing withn full edge case
-    // if(head->fr_count > 60)
-    // {
-    //     return SYSERR
-    // }
-
     //what happens when full?
 
 
     //place block in fr_free at new fr_count
     head->fr_free[head->fr_count] = block;
   
-    head->fr_count++;    
+    head->fr_count++;  
+
+    /* if(head->fr_count > 60)
+    {
+        //create new collector node
+        struct freeblock *newBlock = malloc(sizeof(struct freeblock));
+
+        //inserting
+        head->fr_next = newBlock;
+        newBlock->fr_blocknum = head->fr_blocknum + 62;
+        newBlock->fr_count = 0;
+        head = newBlock;
+    
+    }   */
 
     //kprintf("Inserting: %d at [%d]\r\n", block, head->fr_count);
 
