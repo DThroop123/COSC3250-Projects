@@ -87,6 +87,46 @@ command xsh_fish(int nargs, char *args[])
 		//   and send a FISH_DIRASK packet to it.
 		//   Wait one second for reply to come in, and
 		//   then print contents of fishlist table.
+	
+		uchar nameComp[FISH_MAXNAME];
+		int schoolIndex = 0;
+		nameComp = args[2];
+		uchar _str[FMANLEN];
+		
+
+		//find the school that has the same name
+		for(i = 0; i <SCHOOLMAX; i++)
+		{
+			//
+			if((school[i].used) && (strncmp(school[i].name, nameComp, FISH_MAXNAME)))
+			{
+				schoolIndex = i;	
+			}
+		}		
+
+		//Locating the name of the nome in the school
+		bcast[0] = school[i].mac[0];
+		bcast[1] = school[i].mac[1];
+		bcast[2] = school[i].mac[2];
+		bcast[3] = school[i].mac[3];
+		bcast[4] = school[i].mac[4];
+		bcast[5] = school[i].mac[5];
+
+		//Sending a FISH_DIRASK to the named node
+		fishSend(bcast, FISH_DIRASK);
+
+		//Wait one second
+		sleep(1000);
+		
+		//Print the contents of the fishlist table	
+		for(int a = 0; a < DIRENTRIES; a++)
+		{
+			if(fishlist[a][0] == NULL)
+			{
+			}
+			strcpy(_str, fishlist[a], FMANLEN);
+			fprintf("%s\n", _str);
+		}	
 		
 		printf("No FiSh \"%s\" found in school.\n", args[2]);
 		return OK;
