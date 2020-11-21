@@ -103,7 +103,10 @@ int fileSharer(int dev)
 		// TODO: All of the cases below.
 
 			case FISH_DIRASK:
+				
+				break;
 			case FISH_DIRLIST:
+				break;
 			case FISH_GETFILE:
 			case FISH_HAVEFILE:
 			case FISH_NOFILE:
