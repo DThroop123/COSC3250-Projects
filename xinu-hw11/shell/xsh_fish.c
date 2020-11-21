@@ -92,52 +92,60 @@ command xsh_fish(int nargs, char *args[])
 		int schoolIndex = 0;
 		nameComp = args[2];
 		uchar _str[FMANLEN];
+		int notFound = 1;
 		
 
 		//find the school that has the same name
-		for(i = 0; i <SCHOOLMAX; i++)
+		for(int i = 0; i <SCHOOLMAX; i++)
 		{
-			//
+			
 			if((school[i].used) && (strncmp(school[i].name, nameComp, FISH_MAXNAME)))
 			{
-				schoolIndex = i;	
+				schoolIndex = i;
+				notFound = 0;	
 			}
-		}		
-
-		//Locating the name of the nome in the school
-		bcast[0] = school[i].mac[0];
-		bcast[1] = school[i].mac[1];
-		bcast[2] = school[i].mac[2];
-		bcast[3] = school[i].mac[3];
-		bcast[4] = school[i].mac[4];
-		bcast[5] = school[i].mac[5];
-
-		//Sending a FISH_DIRASK to the named node
-		fishSend(bcast, FISH_DIRASK);
-
-		//Wait one second
-		sleep(1000);
-		
-		//Print the contents of the fishlist table	
-		for(int a = 0; a < DIRENTRIES; a++)
-		{
-			if(fishlist[a][0] == NULL)
-			{
-			}
-			strcpy(_str, fishlist[a], FMANLEN);
-			fprintf("%s\n", _str);
 		}	
+
+		if(notFound == 1)
+		{
+			printf("No FiSh \"%s\" found in school.\n", args[2]);
+			return;
+		}	
+		else
+		{
+			//Locating the name of the node in the school
+			bcast[0] = school[schoolIndex].mac[0];
+			bcast[1] = school[schoolIndex].mac[1];
+			bcast[2] = school[schoolIndex].mac[2];
+			bcast[3] = school[schoolIndex].mac[3];
+			bcast[4] = school[schoolIndex].mac[4];
+			bcast[5] = school[schoolIndex].mac[5];
+
+			//Sending a FISH_DIRASK to the named node
+			fishSend(bcast, FISH_DIRASK);
+
+			//Wait one second
+			sleep(1000);
 		
-		printf("No FiSh \"%s\" found in school.\n", args[2]);
-		return OK;
+			//Print the contents of the fishlist table	
+			for(int a = 0; a < DIRENTRIES; a++)
+			{
+				if(!(fishlist[a][0] == NULL))
+				{
+					strcpy(_str, fishlist[a], FMANLEN);
+					fprintf("%s\n", _str);
+				}
+			}	
+
+			return OK;
+		}
 	}
 	else if (nargs == 4 && strncmp(args[1], "get", 4) == 0)
 	{
-		// TODO: Locate named node in school,
+		// 	 TODO: Locate named node in school,
 		//   and send a FISH_GETFILE packet to it.
 		//   FileSharer puts file in system when it arrives.
 		
-		printf("No FiSh \"%s\" found in school.\n", args[2]);
 		return OK;
 	}
 	else
