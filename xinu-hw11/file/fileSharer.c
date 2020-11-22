@@ -64,6 +64,41 @@ void fishPing(uchar *packet)
 }
 
 /*------------------------------------------------------------------------
+ * fishDirAsk - Reply to a broadcast FISH request.
+ *------------------------------------------------------------------------
+ */
+void fishDirAsk(uchar *packet)
+{
+	uchar *ppkt = packet;
+	struct ethergram *eg = (struct ethergram *)packet;
+
+	/* Source of request becomes destination of reply. */
+	memcpy(eg->dst, eg->src, ETH_ADDR_LEN);
+	/* Source of reply becomes me. */
+	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
+	/* Zero out payload. */
+	bzero(eg->data, ETHER_MINPAYLOAD);
+	/* FISH type becomes ANNOUNCE. */
+	eg->data[0] = FISH_DIRLIST;
+	strncpy(&eg->data[1], nvramGet("hostname\0"), FISH_MAXNAME-1);
+	write(ETH0, packet, ETHER_SIZE + ETHER_MINPAYLOAD);
+}
+
+/*------------------------------------------------------------------------
+ * fishDirList - Reply to a broadcast FISH request.
+ *------------------------------------------------------------------------
+ */
+void fishDirList(uchar *packet)
+{
+	struct ethergram *eg = (struct ethergram *)packet;
+
+
+}
+
+
+
+
+/*------------------------------------------------------------------------
  * fileSharer - Process that shares files over the network.
  *------------------------------------------------------------------------
  */
@@ -95,17 +130,15 @@ int fileSharer(int dev)
 			case FISH_ANNOUNCE:
 				fishAnnounce(packet);
 				break;
-
 			case FISH_PING:
 				fishPing(packet);
 				break;
-
 		// TODO: All of the cases below.
-
 			case FISH_DIRASK:
-				//reads out diretory and sends it back
+				// fishDirAsk(packet);
 				break;
 			case FISH_DIRLIST:
+				// fishDirList(packet);
 				break;
 			case FISH_GETFILE:
 			case FISH_HAVEFILE:

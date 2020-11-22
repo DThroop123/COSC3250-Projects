@@ -90,8 +90,8 @@ command xsh_fish(int nargs, char *args[])
 	
 		uchar nameComp[FISH_MAXNAME];
 		int schoolIndex = 0;
-		nameComp = args[2];
-		uchar _str[FMANLEN];
+		strcpy(nameComp, args[2]);
+		uchar _str[FNAMLEN];
 		int notFound = 1;
 		
 
@@ -132,7 +132,7 @@ command xsh_fish(int nargs, char *args[])
 			{
 				if(!(fishlist[a][0] == NULL))
 				{
-					strcpy(_str, fishlist[a], FMANLEN);
+					strcpy(_str, fishlist[a]);
 					fprintf("%s\n", _str);
 				}
 			}	
