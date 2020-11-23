@@ -82,6 +82,7 @@ void fishDirAsk(uchar *packet)
 	eg->data[0] = FISH_DIRLIST;
 	strncpy(&eg->data[1], nvramGet("hostname\0"), FISH_MAXNAME-1);
 	write(ETH0, packet, ETHER_SIZE + ETHER_MINPAYLOAD);
+	// whatt does this write() function do? (?)
 }
 
 /*------------------------------------------------------------------------
@@ -91,6 +92,10 @@ void fishDirAsk(uchar *packet)
 void fishDirList(uchar *packet)
 {
 	struct ethergram *eg = (struct ethergram *)packet;
+
+	// how do we store and use the fish list? (?)
+
+
 
 
 }
