@@ -93,13 +93,16 @@ command xsh_fish(int nargs, char *args[])
 		strcpy(nameComp, args[2]);
 		uchar _str[FNAMLEN];
 		int notFound = 1;
-		
+
+		//do we need to ping here to find schools in use?
+
+
 
 		//find the school that has the same name
 		for(int i = 0; i <SCHOOLMAX; i++)
 		{
 			
-			if((school[i].used) && (strncmp(school[i].name, nameComp, FISH_MAXNAME)))
+			if((school[i].used) && (!(strncmp(school[i].name, nameComp, FISH_MAXNAME))))
 			{
 				schoolIndex = i;
 				notFound = 0;	

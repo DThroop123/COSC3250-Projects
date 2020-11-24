@@ -80,24 +80,34 @@ void fishDirAsk(uchar *packet)
 	bzero(eg->data, ETHER_MINPAYLOAD);
 	/* FISH type becomes ANNOUNCE. */
 	eg->data[0] = FISH_DIRLIST;
-	strncpy(&eg->data[1], nvramGet("hostname\0"), FISH_MAXNAME-1);
+
+	/* Copying file names into packet */
+	for(int i = 0; i < DIRENTRIES; i++)
+	{
+	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
+	    strncpy(&eg->data[i], filetab[i].fn_name, FNAMLEN + 1);	
+	}
+ 
 	write(ETH0, packet, ETHER_SIZE + ETHER_MINPAYLOAD);
-	// whatt does this write() function do? (?)
+
 }
 
 /*------------------------------------------------------------------------
  * fishDirList - Reply to a broadcast FISH request.
  *------------------------------------------------------------------------
  */
-void fishDirList(uchar *packet)
+int fishDirList(uchar *packet)
 {
 	struct ethergram *eg = (struct ethergram *)packet;
 
-	// how do we store and use the fish list? (?)
+	/* copy the conents of the packet into the fish list */ 
+	
+	for(int i = 0; i < DIRENTRIES; i++)
+	{ 
+		strcpy(fishlist[i][0], eg->data[i]);
+	}
 
-
-
-
+	return OK;
 }
 
 
