@@ -94,10 +94,6 @@ command xsh_fish(int nargs, char *args[])
 		uchar _str[FNAMLEN];
 		int notFound = 1;
 
-		//do we need to ping here to find schools in use?
-
-
-
 		//find the school that has the same name
 		for(int i = 0; i <SCHOOLMAX; i++)
 		{
@@ -116,16 +112,10 @@ command xsh_fish(int nargs, char *args[])
 		}	
 		else
 		{
-			//Locating the name of the node in the school
-			bcast[0] = school[schoolIndex].mac[0];
-			bcast[1] = school[schoolIndex].mac[1];
-			bcast[2] = school[schoolIndex].mac[2];
-			bcast[3] = school[schoolIndex].mac[3];
-			bcast[4] = school[schoolIndex].mac[4];
-			bcast[5] = school[schoolIndex].mac[5];
-
+			
+			//Locating the node and sending it 
 			//Sending a FISH_DIRASK to the named node
-			fishSend(bcast, FISH_DIRASK);
+			fishSend(school[schoolInedx].mac, FISH_DIRASK);
 
 			//Wait one second
 			sleep(1000);
@@ -133,10 +123,9 @@ command xsh_fish(int nargs, char *args[])
 			//Print the contents of the fishlist table	
 			for(int a = 0; a < DIRENTRIES; a++)
 			{
-				if(!(fishlist[a][0] == NULL))
+				if(fishlist[a][0] != '\0')
 				{
-					strcpy(_str, fishlist[a]);
-					fprintf("%s\n", _str);
+					printf("%s\n", fistlist[a]);
 				}
 			}	
 

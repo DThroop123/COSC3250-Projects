@@ -78,17 +78,25 @@ void fishDirAsk(uchar *packet)
 	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
 	/* Zero out payload. */
 	bzero(eg->data, ETHER_MINPAYLOAD);
-	/* FISH type becomes ANNOUNCE. */
+	/* FISH type becomes DIRLIST. */
 	eg->data[0] = FISH_DIRLIST;
 
 	/* Copying file names into packet */
 	for(int i = 0; i < DIRENTRIES; i++)
 	{
 	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
-	    strncpy(&eg->data[i], filetab[i].fn_name, FNAMLEN + 1);	
+	    if(!(filetab[i].fn_state == FILE_FREE))
+	    {
+	    	strncpy(&eg->data[i], filetab[i].fn_name, FNAMLEN);	
+	    }
+
+	    else
+	    {
+	    	bzero(&eg->data[i], FNAMLEN);
+	    }
 	}
  
-	write(ETH0, packet, ETHER_SIZE + ETHER_MINPAYLOAD);
+	write(ETH0, packet, ETHER_SIZE + (DIRENTRIES * FNAMLEN));
 
 }
 
@@ -104,7 +112,8 @@ int fishDirList(uchar *packet)
 	
 	for(int i = 0; i < DIRENTRIES; i++)
 	{ 
-		strcpy(fishlist[i][0], eg->data[i]);
+		strncpy(&fishlist[i][0], eg->data[i * FNAMLEN]);
+		firstlist[i][FNAMLEN] = '\0'; //add the null character that was striped off the end in dirask
 	}
 
 	return OK;
@@ -150,10 +159,10 @@ int fileSharer(int dev)
 				break;
 		// TODO: All of the cases below.
 			case FISH_DIRASK:
-				// fishDirAsk(packet);
+				fishDirAsk(packet);
 				break;
 			case FISH_DIRLIST:
-				// fishDirList(packet);
+				fishDirList(packet);
 				break;
 			case FISH_GETFILE:
 			case FISH_HAVEFILE:
