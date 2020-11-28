@@ -80,16 +80,15 @@ void fishDirAsk(uchar *packet)
 	bzero(eg->data, ETHER_MINPAYLOAD);
 	/* FISH type becomes DIRLIST. */
 	eg->data[0] = FISH_DIRLIST;
-
+	//printf("inserted 'FISH_DIRLIST' into data...");
 	/* Copying file names into packet */
-	for(int i = 0; i < DIRENTRIES; i++)
+	for(int i = 1; i < DIRENTRIES; i++)
 	{
 	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
 	    if(!(filetab[i].fn_state == FILE_FREE))
 	    {
 	    	strncpy(&eg->data[i], filetab[i].fn_name, FNAMLEN);	
 	    }
-
 	    else
 	    {
 	    	bzero(&eg->data[i], FNAMLEN);
@@ -109,15 +108,70 @@ int fishDirList(uchar *packet)
 	struct ethergram *eg = (struct ethergram *)packet;
 
 	/* copy the conents of the packet into the fish list */ 
+
+	//printf("we make it into fishDirList before exception");
 	
-	for(int i = 0; i < DIRENTRIES; i++)
+	for(int i = 1; i < DIRENTRIES; i++)
 	{ 
-		strncpy(&fishlist[i][0], eg->data[i * FNAMLEN]);
-		firstlist[i][FNAMLEN] = '\0'; //add the null character that was striped off the end in dirask
+		strncpy(&fishlist[i][0], (eg->data[i * FNAMLEN]), FNAMLEN);
+		fishlist[i][FNAMLEN] = '\0'; //add the null character that was striped off the end in dirask
 	}
 
 	return OK;
 }
+
+/*------------------------------------------------------------------------
+ * fishGetFile - Reply to a broadcast FISH request.
+ *------------------------------------------------------------------------
+ */
+
+int fishGetFile(uchar *packet)
+{
+	char *ppkt = packet;
+	struct ethergram *eg = (struct ethergram *)packet;
+
+	/* Source of request becomes destination of reply. */
+	memcpy(eg->dst, eg->src, ETH_ADDR_LEN);
+	/* Source of reply becomes me. */
+	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
+	/* Zero out payload. */
+	bzero(eg->data, ETHER_MINPAYLOAD);
+	/* FISH type becomes one of these */
+	
+	//if the file exists
+	eg->data[0] = FISH_HAVEFILE;
+
+	//if it doesnt 
+	eg->data[0] = FISH_NOFILE;
+
+
+
+
+}
+
+/*------------------------------------------------------------------------
+ * fishHaveFile - Reply to a broadcast FISH request.
+ *------------------------------------------------------------------------
+ */
+
+int fishHaveFile(uchar *packet)
+{
+	return OK;
+}
+
+/*------------------------------------------------------------------------
+ * fishNoFile() - Reply to a broadcast FISH request.
+ *------------------------------------------------------------------------
+ */
+
+int fishNoFile(uchar *packet)
+{
+	return OK;
+}
+
+
+
+
 
 
 
@@ -162,11 +216,15 @@ int fileSharer(int dev)
 				fishDirAsk(packet);
 				break;
 			case FISH_DIRLIST:
+				printf("We made it to dirlist!");
 				fishDirList(packet);
 				break;
 			case FISH_GETFILE:
+				fishGetFile(packet);
 			case FISH_HAVEFILE:
+				fishHaveFile(packet);
 			case FISH_NOFILE:
+				fishNoFile(packet);
 			default:
 				printf("ERROR: Got unhandled FISH type %d\n", eg->data[0]);
 			}

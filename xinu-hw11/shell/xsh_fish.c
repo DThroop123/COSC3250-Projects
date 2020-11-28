@@ -101,6 +101,7 @@ command xsh_fish(int nargs, char *args[])
 			if((school[i].used) && (!(strncmp(school[i].name, nameComp, FISH_MAXNAME))))
 			{
 				schoolIndex = i;
+				
 				notFound = 0;	
 			}
 		}	
@@ -115,7 +116,7 @@ command xsh_fish(int nargs, char *args[])
 			
 			//Locating the node and sending it 
 			//Sending a FISH_DIRASK to the named node
-			fishSend(school[schoolInedx].mac, FISH_DIRASK);
+			fishSend(school[schoolIndex].mac, FISH_DIRASK);
 
 			//Wait one second
 			sleep(1000);
@@ -125,9 +126,11 @@ command xsh_fish(int nargs, char *args[])
 			{
 				if(fishlist[a][0] != '\0')
 				{
-					printf("%s\n", fistlist[a]);
+					printf("%s\n", fishlist[a]);
 				}
 			}	
+
+			printf("You just didn't store it right.");
 
 			return OK;
 		}
@@ -137,6 +140,46 @@ command xsh_fish(int nargs, char *args[])
 		// 	 TODO: Locate named node in school,
 		//   and send a FISH_GETFILE packet to it.
 		//   FileSharer puts file in system when it arrives.
+
+		uchar nameComp[FISH_MAXNAME];
+		uchar fileComp[FNAMLEN];
+		strcpy(nameComp, args[2]);
+		strcpy(fileComp, args[3]);
+
+		//printf("School name: %s, File name: %s\n", nameComp, fileComp);
+
+		//find the school that has the same name
+		for(int i = 0; i <SCHOOLMAX; i++)
+		{
+			
+			if((school[i].used) && (!(strncmp(school[i].name, nameComp, FISH_MAXNAME))))
+			{
+				schoolIndex = i;
+				
+				notFound = 0;	
+			}
+		}	
+
+		if(notFound == 1)
+		{
+			printf("No FiSh \"%s\" found in school.\n", args[2]);
+			return;
+		}	
+		else
+		{
+			
+			//how do we send the file name to be used on the receiving end? (?)
+			
+			fishSend(school[schoolIndex].mac, FISH_GETFILE);
+
+
+
+
+
+		}
+
+
+
 		
 		return OK;
 	}
