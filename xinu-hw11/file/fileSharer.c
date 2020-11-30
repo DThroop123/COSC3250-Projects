@@ -80,9 +80,10 @@ void fishDirAsk(uchar *packet)
 	bzero(eg->data, ETHER_MINPAYLOAD);
 	/* FISH type becomes DIRLIST. */
 	eg->data[0] = FISH_DIRLIST;
-	//printf("inserted 'FISH_DIRLIST' into data...");
+
+
 	/* Copying file names into packet */
-	// where do we start storing data for the file names
+
 	for(int i = 0; i < DIRENTRIES; i++)
 	{
 	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
@@ -95,6 +96,7 @@ void fishDirAsk(uchar *packet)
 	    	bzero(&eg->data[(i * FNAMLEN) + 1], FNAMLEN);
 	    }
 	}
+	
  
 	write(ETH0, packet, ETHER_SIZE + (DIRENTRIES * FNAMLEN));
 
@@ -112,11 +114,12 @@ int fishDirList(uchar *packet)
 
 	//printf("we make it into fishDirList before exception");
 	
-	for(int i = 1; i < DIRENTRIES; i++)
+	for(int i = 0; i < DIRENTRIES; i++)
 	{ 
-		strncpy(&fishlist[i][0], (eg->data[(i * FNAMLEN) + 1]), FNAMLEN);
+		strncpy(&fishlist[i][0], &(eg->data[(i * FNAMLEN) + 1]), FNAMLEN);
 		fishlist[i][FNAMLEN - 1] = '\0'; //add the null character that was striped off the end in dirask
 	}
+
 
 	return OK;
 }
@@ -134,6 +137,8 @@ int fishGetFile(uchar *packet)
 {
 	char *ppkt = packet;
 	struct ethergram *eg = (struct ethergram *)packet;
+	uchar *fileName[FNAMLEN];
+	struct filenode *file;
 
 	/* Source of request becomes destination of reply. */
 	memcpy(eg->dst, eg->src, ETH_ADDR_LEN);
@@ -141,9 +146,17 @@ int fishGetFile(uchar *packet)
 	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
 	/* Zero out payload. */
 	bzero(eg->data, ETHER_MINPAYLOAD);
+
 	/* FISH type becomes one of these */
 	
 	//search the filetab of the receiving machine
+	
+	//access the fileName
+	strncpy(&fileName, &(eg->data[FNAMLEN]), FNAMLEN);
+	printf("File Name: %s\r\n", fileName);
+	
+	//for(int i = 0; i <
+	 
 	
 	//if(exists)
 	eg->data[0] = FISH_HAVEFILE;
@@ -243,10 +256,10 @@ int fileSharer(int dev)
 				fishDirAsk(packet);
 				break;
 			case FISH_DIRLIST:
-				printf("We made it to dirlist!");
 				fishDirList(packet);
 				break;
 			case FISH_GETFILE:
+				printf("We are about to call fishGetFile()\r\n");
 				fishGetFile(packet);
 			case FISH_HAVEFILE:
 				fishHaveFile(packet);
