@@ -83,16 +83,16 @@ void fishDirAsk(uchar *packet)
 	//printf("inserted 'FISH_DIRLIST' into data...");
 	/* Copying file names into packet */
 	// where do we start storing data for the file names
-	for(int i = 1; i < DIRENTRIES; i++)
+	for(int i = 0; i < DIRENTRIES; i++)
 	{
 	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
 	    if(!(filetab[i].fn_state == FILE_FREE))
 	    {
-	    	strncpy(&eg->data[i], filetab[i].fn_name, FNAMLEN);	
+	    	strncpy(&eg->data[(i * FNAMLEN) + 1], filetab[i].fn_name, FNAMLEN);	
 	    }
 	    else
 	    {
-	    	bzero(&eg->data[i], FNAMLEN);
+	    	bzero(&eg->data[(i * FNAMLEN) + 1], FNAMLEN);
 	    }
 	}
  
@@ -114,8 +114,8 @@ int fishDirList(uchar *packet)
 	
 	for(int i = 1; i < DIRENTRIES; i++)
 	{ 
-		strncpy(&fishlist[i][0], (eg->data[i * FNAMLEN]), FNAMLEN);
-		fishlist[i][FNAMLEN] = '\0'; //add the null character that was striped off the end in dirask
+		strncpy(&fishlist[i][0], (eg->data[(i * FNAMLEN) + 1]), FNAMLEN);
+		fishlist[i][FNAMLEN - 1] = '\0'; //add the null character that was striped off the end in dirask
 	}
 
 	return OK;
@@ -171,10 +171,10 @@ int fishHaveFile(uchar *packet)
 	int fd = 0;
 
 	//extract payload to get file name
-	strncpy(&fileName, &eg->data[0], FNAMLEN);
+	strncpy(&fileName, &eg->data[1], FNAMLEN);
 
 	//extract payload to get file contents
-	strncpy(&fileName, &eg->data[FNAMLEN], DISKBLOCKLEN);
+	strncpy(&contents, &eg->data[FNAMLEN + 1], DISKBLOCKLEN);
 
 	//write file to system
 
@@ -197,6 +197,7 @@ int fishHaveFile(uchar *packet)
 
 int fishNoFile(uchar *packet)
 {
+	//this is not really right 
 	printf("The file was not found.\n");
 
 	return OK;

@@ -130,7 +130,7 @@ command xsh_fish(int nargs, char *args[])
 				}
 			}	
 
-			printf("You just didn't store it right.");
+		
 
 			return OK;
 		}
