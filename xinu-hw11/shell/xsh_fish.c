@@ -143,6 +143,8 @@ command xsh_fish(int nargs, char *args[])
 
 		uchar nameComp[FISH_MAXNAME];
 		uchar fileComp[FNAMLEN];
+		int schoolIndex = 0;
+		int notFound = 0;
 		strcpy(nameComp, args[2]);
 		strcpy(fileComp, args[3]);
 
@@ -167,15 +169,7 @@ command xsh_fish(int nargs, char *args[])
 		}	
 		else
 		{
-			
-			//how do we send the file name to be used on the receiving end? (?)
-			
 			fishSend(school[schoolIndex].mac, FISH_GETFILE);
-
-
-
-
-
 		}
 
 

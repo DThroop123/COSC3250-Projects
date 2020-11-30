@@ -82,6 +82,7 @@ void fishDirAsk(uchar *packet)
 	eg->data[0] = FISH_DIRLIST;
 	//printf("inserted 'FISH_DIRLIST' into data...");
 	/* Copying file names into packet */
+	// where do we start storing data for the file names
 	for(int i = 1; i < DIRENTRIES; i++)
 	{
 	    //splitting up -> check state, iterate and insert each character, if file state is not in use set to zero
@@ -125,6 +126,10 @@ int fishDirList(uchar *packet)
  *------------------------------------------------------------------------
  */
 
+ // how do we actually insert the file name into the payload? (?)
+ // how do we know if it exists or not? (?) --> search through the filetab?
+ // does fishGetFile() decide on FISH_HAVEFILE or FISH_NOFILE? (?)
+
 int fishGetFile(uchar *packet)
 {
 	char *ppkt = packet;
@@ -138,15 +143,16 @@ int fishGetFile(uchar *packet)
 	bzero(eg->data, ETHER_MINPAYLOAD);
 	/* FISH type becomes one of these */
 	
-	//if the file exists
+	//search the filetab of the receiving machine
+	
+	//if(exists)
 	eg->data[0] = FISH_HAVEFILE;
 
-	//if it doesnt 
+	//else
 	eg->data[0] = FISH_NOFILE;
-
-
-
-
+	
+	//write back to the ethernet packet
+	write(ETH0, packet, ETHER_SIZE + (DIRENTRIES * FNAMLEN));
 }
 
 /*------------------------------------------------------------------------
@@ -154,8 +160,33 @@ int fishGetFile(uchar *packet)
  *------------------------------------------------------------------------
  */
 
+ //when extracting the payload do we just use index 0? (?)
+ //do we use DISKBLOCKLEN for the length of the contents? (?)
+
 int fishHaveFile(uchar *packet)
 {
+	struct ethergram *eg = (struct ethergram *)packet;
+	uchar fileName[FNAMLEN];
+	uchar contents[DISKBLOCKLEN];
+	int fd = 0;
+
+	//extract payload to get file name
+	strncpy(&fileName, &eg->data[0], FNAMLEN);
+
+	//extract payload to get file contents
+	strncpy(&fileName, &eg->data[FNAMLEN], DISKBLOCKLEN);
+
+	//write file to system
+
+	//obtain file descriptor
+	fd = fileCreate(&fileName);
+
+	//write contents
+	for(int i = 0; i < DISKBLOCKLEN; i++)
+	{
+		filePutChar(fd, contents[i]);
+	}
+
 	return OK;
 }
 
@@ -166,15 +197,10 @@ int fishHaveFile(uchar *packet)
 
 int fishNoFile(uchar *packet)
 {
+	printf("The file was not found.\n");
+
 	return OK;
 }
-
-
-
-
-
-
-
 
 /*------------------------------------------------------------------------
  * fileSharer - Process that shares files over the network.
