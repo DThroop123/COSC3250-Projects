@@ -137,22 +137,16 @@ int fishGetFile(uchar *packet)
 {
 	char *ppkt = packet;
 	struct ethergram *eg = (struct ethergram *)packet;
-	uchar *fileName[FNAMLEN];
+	char *fileName;
 	struct filenode *file;
-
-	/* Source of request becomes destination of reply. */
-	memcpy(eg->dst, eg->src, ETH_ADDR_LEN);
-	/* Source of reply becomes me. */
-	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
-	/* Zero out payload. */
-	bzero(eg->data, ETHER_MINPAYLOAD);
 
 	/* FISH type becomes one of these */
 	
 	//search the filetab of the receiving machine
 	
 	//access the fileName
-	strncpy(&fileName, &(eg->data[FNAMLEN]), FNAMLEN);
+	//strncpy(fileName, &(eg->data[1]), FNAMLEN);
+	fileName = &(eg->data[1]);
 	printf("File Name: %s\r\n", fileName);
 	
 	//for(int i = 0; i <

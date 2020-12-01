@@ -47,7 +47,7 @@ static int fishSend(uchar *dst, char fishtype)
 	return OK;
 }
 
-static int fishSendfName(uchar *dst, char fishtype, uchar *fileName)
+static int fishSendfName(uchar *dst, char fishtype, char *fileName)
 {
 	uchar packet[PKTSZ];
 	uchar *ppkt = packet;
@@ -73,10 +73,12 @@ static int fishSendfName(uchar *dst, char fishtype, uchar *fileName)
 
 	// we need to insert the file name here
 	
-	for(i = 0; i < FNAMLEN; i++)
+	for(i = 0; i < strnlen(fileName, FNAMLEN); i++)
 	{
 		*ppkt++ = fileName[i];
-	}
+	}	
+	
+	*ppkt++ = '\0';
 
 	printf("We insert the file name\r\n");
 	
@@ -190,11 +192,9 @@ command xsh_fish(int nargs, char *args[])
 		//   FileSharer puts file in system when it arrives.
 
 		uchar nameComp[FISH_MAXNAME];
-		uchar fileComp[FNAMLEN];
 		int schoolIndex = 0;
 		int notFound = 0;
 		strcpy(nameComp, args[2]);
-		strcpy(fileComp, args[3]);
 
 		//printf("School name: %s, File name: %s\n", nameComp, fileComp);
 
@@ -217,7 +217,7 @@ command xsh_fish(int nargs, char *args[])
 		}	
 		else
 		{
-			fishSendfName(school[schoolIndex].mac, FISH_GETFILE, fileComp);
+			fishSendfName(school[schoolIndex].mac, FISH_GETFILE, args[3]);
 
 			sleep(1000);
 			
