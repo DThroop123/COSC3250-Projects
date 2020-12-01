@@ -174,7 +174,7 @@ int fishGetFile(uchar *packet)
 	/* Source of reply becomes me. */
 	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
 	/* Zero out payload. */
-	bzero(eg->data, ETHER_MINPAYLOAD);
+	//bzero(eg->data, ETHER_MINPAYLOAD);
 
 	if(found)
 	{
@@ -183,24 +183,27 @@ int fishGetFile(uchar *packet)
 
 		eg->data[0] = FISH_HAVEFILE;
 		
-		//put file contents in packet
-		
-		//name
-		eg->data[1] = fileName;
+		//content look for the proper constant to replace the block size of 256 in header file
+		for(int i = 0; i < 256; i++)
+		{
+			eg->data[(1+FNAMLEN)+ i] = file->fn_data[i];
+		}
 
-		//content
-		eg->data[2] = &(file->fn_data);
+		//size needs to be changed for this to match
+		//	EHTER_SIZE + FNAMLEN + CONENT MAX(256) + fishtype
+		write(ETH0, packet, ETHER_SIZE + FNAMLEN + FISH_HAVEFILE + 256);
 	}
 	else
 	{
 		eg->data[0] = FISH_NOFILE;
-
-		//name
-		eg->data[1] = fileName;
+		bzero(&(eg->data[1]), ETHER_MINPAYLOAD);
+	
+		//size needs to change to match
+		//	ETHER_SIZE + FNMALEN + fishtype
+		write(ETH0, packet, ETHER_SIZE + FNAMLEN + FISH_NOFILE);
 	}	
 
 	//write back to the ethernet packet
-	write(ETH0, packet, ETHER_SIZE + (DIRENTRIES * FNAMLEN));
 }
 
 /*------------------------------------------------------------------------
@@ -295,10 +298,13 @@ int fileSharer(int dev)
 				break;
 			case FISH_GETFILE:
 				fishGetFile(packet);
+				break;
 			case FISH_HAVEFILE:
 				fishHaveFile(packet);
+				break;
 			case FISH_NOFILE:
 				fishNoFile(packet);
+				break;
 			default:
 				printf("ERROR: Got unhandled FISH type %d\n", eg->data[0]);
 			}

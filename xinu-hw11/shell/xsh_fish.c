@@ -219,17 +219,12 @@ command xsh_fish(int nargs, char *args[])
 
 			sleep(1000);
 
-			//what do we do here
+			return OK;
 			
 		}
-
-
-
-		
-		return OK;
 	}
-	else
-    {
+   else
+   {
         fprintf(stdout, "Usage: fish [ping | list <node> | get <node> <filename>]\n");
         fprintf(stdout, "Simple file sharing protocol.\n");
         fprintf(stdout, "ping - lists available FISH nodes in school.\n");
