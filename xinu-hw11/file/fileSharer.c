@@ -139,25 +139,66 @@ int fishGetFile(uchar *packet)
 	struct ethergram *eg = (struct ethergram *)packet;
 	char *fileName;
 	struct filenode *file;
+	int found = 0;
 
 	/* FISH type becomes one of these */
 	
 	//search the filetab of the receiving machine
 	
 	//access the fileName
-	//strncpy(fileName, &(eg->data[1]), FNAMLEN);
 	fileName = &(eg->data[1]);
-	printf("File Name: %s\r\n", fileName);
-	
-	//for(int i = 0; i <
-	 
-	
-	//if(exists)
-	eg->data[0] = FISH_HAVEFILE;
+	printf("File Name: %s\n", fileName);
 
-	//else
-	eg->data[0] = FISH_NOFILE;
-	
+	//search for file
+
+	for(int i = 0; i < DIRENTRIES; i++)
+	{
+		printf("%s\n", filetab->fn_name);
+
+		if(strncmp(fileName, filetab->fn_name, FNAMLEN) == 0)
+		{
+			printf("Yes we are equal.\n");
+			file = &filetab;
+			found = 1;
+			break;		
+		}
+		else
+		{
+			filetab++;
+		}
+		
+	}
+
+	/* Source of request becomes destination of reply. */
+	memcpy(eg->dst, eg->src, ETH_ADDR_LEN);
+	/* Source of reply becomes me. */
+	memcpy(eg->src, myMAC, ETH_ADDR_LEN);
+	/* Zero out payload. */
+	bzero(eg->data, ETHER_MINPAYLOAD);
+
+	if(found)
+	{
+
+		printf("Yes we are found\n");
+
+		eg->data[0] = FISH_HAVEFILE;
+		
+		//put file contents in packet
+		
+		//name
+		eg->data[1] = fileName;
+
+		//content
+		eg->data[2] = &(file->fn_data);
+	}
+	else
+	{
+		eg->data[0] = FISH_NOFILE;
+
+		//name
+		eg->data[1] = fileName;
+	}	
+
 	//write back to the ethernet packet
 	write(ETH0, packet, ETHER_SIZE + (DIRENTRIES * FNAMLEN));
 }
@@ -253,7 +294,6 @@ int fileSharer(int dev)
 				fishDirList(packet);
 				break;
 			case FISH_GETFILE:
-				printf("We are about to call fishGetFile()\r\n");
 				fishGetFile(packet);
 			case FISH_HAVEFILE:
 				fishHaveFile(packet);

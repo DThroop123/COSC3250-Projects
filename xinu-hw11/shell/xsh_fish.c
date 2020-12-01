@@ -80,7 +80,6 @@ static int fishSendfName(uchar *dst, char fishtype, char *fileName)
 	
 	*ppkt++ = '\0';
 
-	printf("We insert the file name\r\n");
 	
 	// will this go over the maximum space for the payload? (?)
 		
@@ -92,7 +91,6 @@ static int fishSendfName(uchar *dst, char fishtype, char *fileName)
 		
 	write(ETH0, packet, ppkt - packet);
 
-	printf("The write went okay\r\n");
 	
 	return OK;
 }	
@@ -187,7 +185,7 @@ command xsh_fish(int nargs, char *args[])
 	}
 	else if (nargs == 4 && strncmp(args[1], "get", 4) == 0)
 	{
-		// 	 TODO: Locate named node in school,
+		//   TODO: Locate named node in school,
 		//   and send a FISH_GETFILE packet to it.
 		//   FileSharer puts file in system when it arrives.
 
@@ -220,6 +218,8 @@ command xsh_fish(int nargs, char *args[])
 			fishSendfName(school[schoolIndex].mac, FISH_GETFILE, args[3]);
 
 			sleep(1000);
+
+			//what do we do here
 			
 		}
 
